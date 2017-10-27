@@ -2,7 +2,7 @@ class UITextField {
   float p1_x, p1_y, p2_x, p2_y;
   float textField_width, textField_height;
   float text_Size = 20;
-  UITextField(float x1, float y1, float x2, float y2) {
+  UITextField(float x1, float y1, float x2, float y2) {  //Corners of the text field
     this.p1_x = x1;
     this.p1_y = y1;
     this.p2_x = x2;
@@ -49,6 +49,11 @@ class UITextField {
   String placeholder_text = "Enter text here";
   boolean selected = false;
   boolean text_inTheField = false;
+  
+  void clearUITextField() {
+    text = "";
+    text_inTheField = false;
+  }
 
   void drawItems() {
     makeRectangleTextBox();
@@ -112,12 +117,12 @@ class UITextField {
       } else {
         cursor(TEXT);
       }
-      if (mousePressed == true) {
+      if (mousePressed == true && !mouseHolding) {
         selected = true;
       }
     } else {
       cursor(ARROW);
-      if (mousePressed == true) {
+      if (mousePressed == true && !mouseHolding) {
         selected = false;
       }
     }  //Mouse cursor
@@ -177,7 +182,7 @@ class UITextField {
         } else if (text.length() > 1) {
           text = text.substring(0, text.length() - 1);
         }
-      } else if (key == 13 || key == '\n') {
+      } else if ((key == 13 || key == '\n') && this.singleLineTextField == false) {
         //check if a new line can be added and then insert a \n
         text += "\n";
         println("Enter key pressed");
