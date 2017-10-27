@@ -117,12 +117,12 @@ class UITextField {
       } else {
         cursor(TEXT);
       }
-      if (mousePressed == true && !mouseHolding) {
+      if (mousePressed == true) {
         selected = true;
       }
     } else {
       cursor(ARROW);
-      if (mousePressed == true && !mouseHolding) {
+      if (mousePressed == true) {
         selected = false;
       }
     }  //Mouse cursor

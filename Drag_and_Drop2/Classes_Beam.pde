@@ -13,7 +13,7 @@ class Force {
   int direction = 0;  //1 for UP, -1 for DOWN
   Force(Point action_point, int Direction) {
     this.head = action_point;
-    this.direction = Direction;
+    this.direction = Direction;  
   }
   
   
@@ -28,10 +28,16 @@ class Force {
       line(head.X, head.Y, head.X - 10 * sin(radians(30)), head.Y + 10 * cos(radians(30)));
       line(head.X, head.Y, head.X + 10 * sin(radians(30)), head.Y + 10 * cos(radians(30)));
       line(head.X, head.Y, head.X, head.Y + 50);
+      textAlign(CENTER,TOP);
+      textSize(25);
+      text(str(magnitude) + "N", head.X, head.Y + 50);
     } else if (direction == -1) {
       line(head.X, head.Y, head.X - 10 * sin(radians(30)), head.Y - 10 * cos(radians(30)));
       line(head.X, head.Y, head.X + 10 * sin(radians(30)), head.Y - 10 * cos(radians(30)));
       line(head.X, head.Y, head.X, head.Y - 50);
+      textAlign(CENTER,BOTTOM);
+      textSize(25);
+      text(str(magnitude) + "N", head.X, head.Y - 50);
     }
   }
 }
@@ -50,8 +56,13 @@ class Beam {
 
   float Length, Thickness;
 
-  Force support_A, support_B;
-
+  Force support_A, support_B;  //Support forces on the beam
+  ArrayList<Force> loads = new ArrayList<Force>();  //Loads on the beam
+  
+  void calculateSupportReactions() {
+    
+  }
+  
   Beam(Point center, float Length_m, float Thickness_m) {
 
     this.Length_m = Length_m;

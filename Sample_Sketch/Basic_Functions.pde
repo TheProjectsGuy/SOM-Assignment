@@ -1,5 +1,6 @@
 void setup_Fonts() {
   Baisc_Screens_LoadingFont = loadFont("AgencyFB-Bold-100.vlw");
+  Forces_Font = loadFont("Arial-BoldMT-50.vlw");
 }
 
 void attach_images() {
@@ -37,7 +38,7 @@ void TerminalEssential() {
 }
 
 
-float scale_1m_pixels = 100;
+float scale_1m_pixels = 200;  //N pixels make up 1 meter
 
 float m_to_pixel(float value_m) {
   float value_pixels = value_m * scale_1m_pixels;
@@ -45,9 +46,12 @@ float m_to_pixel(float value_m) {
 }
 
 void initialize_variables() {
-  beam = new Beam(new Point(width/2, height/2), 4, 0.2);
+  //Initialize beam
+  beam = new Beam(new Point(width/2, height/2), 4, 0.2);  
   
+  //Initialize temrinal
   terminal = new UITextField(width * 0.1,height - 40,width * 0.9,height);
   terminal.placeholder_text = "Terminal Console";
   terminal.singleLineTextField = true;
+ 
 }

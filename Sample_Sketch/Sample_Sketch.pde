@@ -51,4 +51,10 @@ void keyPressed() {
   if (terminal.selected) {
     terminal.keyboardManager();
   }
+  else if (key == 's') {
+    beam.AttachForce(-50,beam.Length_m/2);
+  }
+  else if (key == 'a') {
+    beam.AttachForce(-25,beam.Length_m/4);
+  }
 }
