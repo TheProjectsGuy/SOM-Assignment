@@ -30,10 +30,10 @@ void Startup_Screen() {
   }
   fill(0,0,255);
   textAlign(CENTER,CENTER);
-  textFont(Baisc_Screens_LoadingFont,45);
+  textFont(Baisc_Screens_LoadingFont,90);
   text("Bending Moment Software",width/2,height/10);
-  
   delay(10);
+  
 }
 
 void Error_screen_navigator() {

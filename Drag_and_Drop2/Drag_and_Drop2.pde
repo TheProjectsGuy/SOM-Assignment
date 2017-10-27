@@ -1,6 +1,8 @@
 Force support_A, support_B;
 boolean mouseHolding = false;
 
+Beam beam;
+
 void setup() {
   fullScreen();
   beam = new Beam(new Point(width/2, height/2), 4, 0.2);

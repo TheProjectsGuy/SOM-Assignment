@@ -15,6 +15,8 @@ class Force {
     this.head = action_point;
     this.direction = Direction;
   }
+  
+  
   color Line_Color = color(0);
   float Force_stroke_thickness = 1.5;
   boolean mouseTrackingMode = false;
@@ -109,5 +111,3 @@ class Material {
 }
 
 //Material List needed
-
-Beam beam;
