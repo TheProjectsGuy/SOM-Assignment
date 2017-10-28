@@ -12,7 +12,9 @@ class Point {
 class Force {
   Point head;  //Point
   float magnitude = 0;
-  String Name; 
+  String Name = ""; 
+  Force() {
+  }
 
   Force(Point action_point, float Value) {
     this.head = action_point;
@@ -25,21 +27,25 @@ class Force {
   }
 
 
-
   color Line_Color = color(0);
   float Force_stroke_thickness = 1.5;
   boolean mouseTrackingMode = false;
 
   void make() {
-    this.make(this.head);
+    if (!mouseTrackingMode) {
+      this.make(this.head);
+    } else {
+      this.Line_Color = color(0,0,255);  //Draggable forces have blue colour
+      this.make(new Point(mouseX,mouseY));
+    }
   }
 
   void make(Point headAt) {   //
     stroke(Line_Color);
     strokeWeight(Force_stroke_thickness);
-    if (magnitude >= 0) {  //Pointing upwards
+    if (magnitude >= 0 && this.mouseTrackingMode == false) {  //Pointing upwards
       textFont(Forces_Font);
-      textSize(20);
+      textSize(10);
       fill(this.Line_Color);
       textAlign(CENTER, BOTTOM);
       text(this.Name, headAt.X, headAt.Y - beam.Thickness / 2 - 5);
@@ -48,11 +54,11 @@ class Force {
       line(headAt.X, headAt.Y, headAt.X, headAt.Y + 50);  
       textFont(Forces_Font);
       textAlign(CENTER, TOP);
-      textSize(25);
+      textSize(12);
       text(this.displayForceMagnitude(), headAt.X, headAt.Y + 55);
-    } else if (magnitude < 0) {  //Pointing downwards
+    } else if ((magnitude < 0) || this.mouseTrackingMode == true) {  //Pointing downwards
       textFont(Forces_Font);
-      textSize(20);
+      textSize(10);
       fill(this.Line_Color);
       textAlign(CENTER, TOP);
       text(this.Name, headAt.X, headAt.Y + beam.Thickness / 2 + 5);
@@ -61,7 +67,7 @@ class Force {
       line(headAt.X, headAt.Y, headAt.X, headAt.Y - 50); 
       textFont(Forces_Font);
       textAlign(CENTER, BOTTOM);
-      textSize(25);
+      textSize(12);
       text(this.displayForceMagnitude(), headAt.X, headAt.Y - 55);
     }
   }
@@ -189,17 +195,17 @@ class Beam {
 class BeamSpecifications {
   float Max_Distance_From_Neutral_Axis = 0;
   Material material;
-  float Moment_Of_Inertia = 0;
+  float SectionModulus = 0;
+  ArrayList<Float> Bending_Moments = new ArrayList<Float>();  //Bending moments at every point force
+  
 }
 
 class Material {
   String Name;
   float Max_Stress;
-  float Youngs_Modulous;
-  Material(String name, float Max_Tensile_Stress, float Youngs_Modulous) {
+  Material(String name, float Max_yield_stress) {
     this.Name = name;
-    this.Max_Stress = Max_Tensile_Stress;
-    this.Youngs_Modulous = Youngs_Modulous;
+    this.Max_Stress = Max_yield_stress;
   }
 }
 

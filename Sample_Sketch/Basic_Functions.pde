@@ -86,6 +86,13 @@ float m_to_pixel(float value_m) {
   return value_pixels;
 }
 
+float pixelX_to_mL_on_beam(float pixelX) {
+  pixelX = constrain(pixelX,beam.center.X - beam.Length/2, beam.center.X + beam.Length/2);  //Anything outside this is useless
+  pixelX -= beam.center.X - beam.Length/2;
+  float dist_mL = pixelX / scale_1m_pixels;
+  return dist_mL;
+}
+
 void initialize_variables() {
   //Initialize beam
   beam = new Beam(new Point(width/2, height/2), 4, 0.2);  
@@ -94,4 +101,7 @@ void initialize_variables() {
   terminal = new UITextField(width * 0.1, height - 40, width * 0.9, height);
   terminal.placeholder_text = "Terminal Console";
   terminal.singleLineTextField = true;
+  
+  //Forces : Dragging forces
+  headAt = new Point(width - 40, height/3);
 }

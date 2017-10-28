@@ -31,16 +31,15 @@ void doTerminalCommand(String command) {
   if (command.startsWith("BEAM.")) {  //Beam associated command
     command = command.substring("BEAM.".length());  //Beam function obtained
     println("\"" + command + "\"");
-    if (command.equals("RESET")) {
-      beam = new Beam(new Point(width/2, height/2), 1, 0.01);
-    } else if (command.startsWith("SETLENGTH(")) {
+    if (command.equals("RESET")) {  //reset
+      beam = new Beam(new Point(width/2, height/2), 4, 0.1);
+    } else if (command.startsWith("SETLENGTH(")) {  //Setlength
       beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
-      
     }
   } else if (command.startsWith("NewLoad(".toUpperCase())) {  //New load added
     command = command.substring("NewLoad(".length(), command.length() - 1);
     String[] arguments = split(command, ',');
-    println(arguments);
+    //println(arguments);  
     float magnitude, dist_L;
     if (arguments[0].endsWith("kN".toUpperCase())) {
       magnitude = -float(arguments[0].substring(0, arguments[0].length() - 2)) * 1e3;  //Entry in kN
@@ -58,6 +57,18 @@ void doTerminalCommand(String command) {
     }
     println(str(magnitude) + " at L : " + dist_L);
     beam.AttachForce(magnitude, dist_L);
+  } else if (command.startsWith("SCREEN.")) {  //Screen segue
+    command = command.substring("SCREEN.".length());
+    switch(command) {
+    case "BMA":
+      CURRENT_SCREEN = "Bending Moment Screen";
+      CURRENT_VIEW = "Loading View";  //Show the Bengind Moment screen : Introduction 
+      break;
+      default:
+      terminal.text = "";
+      CURRENT_SCREEN = "Introduction Screen";
+      CURRENT_VIEW = "Broken Link";
+    }
   } else {
     switch(command) {
     case "EXIT":
