@@ -1,8 +1,10 @@
 void setup_Fonts() {  //Font setup module
   Baisc_Screens_LoadingFont = loadFont("AgencyFB-Bold-100.vlw");
-  Forces_Font = loadFont("Arial-BoldMT-50.vlw");
+  //Forces_Font = loadFont("Arial-BoldMT-50.vlw");  
+  Forces_Font = loadFont("JavaneseText-25.vlw");
   UITextField_TextFont = loadFont("CenturyGothic-30.vlw");
   Error_MessageFont = loadFont("Constantia-Bold-100.vlw");
+  placerFont = loadFont("Consolas-20.vlw");
 }
 
 PImage close_icon, info_icon, help_icon, home_icon, terminal_clear_icon;
@@ -70,10 +72,6 @@ void TerminalEssential() {  //Essential : Main Terminal
   imageMode(CORNER);
   image(terminal_clear_icon, width * 0.9 + 10, height - 40, 35, 40);
   terminal.drawItems();
-  if (mouseX <= width * 0.9 + 10 + 35 && mouseX >= width * 0.9 + 25 && mouseY >= height - 40 && mousePressed && !mouseHolding) {
-    terminal.text = "";
-    terminal.placeholder_text = "Terminal Console";
-  }
 }
 
 
@@ -101,7 +99,9 @@ void initialize_variables() {
   terminal = new UITextField(width * 0.1, height - 40, width * 0.9, height);
   terminal.placeholder_text = "Terminal Console";
   terminal.singleLineTextField = true;
-  
+  terminal.text = "";
+  terminal.text_inTheField = false;
+    
   //Forces : Dragging forces
   headAt = new Point(width - 40, height/3);
 }

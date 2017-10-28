@@ -7,7 +7,7 @@ void Bending_Moment_Screen_navigator() {
   if (!dragging_forces && beam.loads.size() == 0)
     terminal.placeholder_text = "Drag and drop forces";
   else if (beam.loads.size() == 0) {
-    terminal.text = "Force grabbed";
+    terminal.placeholder_text = "Force grabbed";
   }
   switch (CURRENT_VIEW) {
   case "Loading View":
@@ -34,6 +34,8 @@ void load_drag_drop_arrows() {
   rect(headAt.X - 15, headAt.Y - 50 - 10, headAt.X + 15, headAt.Y + 10);
 }
 
+PFont placerFont;
+
 void Starting_screen_BMA() {
   background(255, 255, 255);
   beam.draw_beam();
@@ -44,7 +46,31 @@ void Starting_screen_BMA() {
   }
   if (dragging_forces) {
     force_drag.mouseTrackingMode = true;
-    force_drag.make();
+    force_drag.make();  //Dragging the force
+    //making the adjusters
+    stroke(0);
+    strokeWeight(0.5);
+    line(beam.center.X - beam.Length/2, beam.center.Y, beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness * 2);  //Left extreme
+    line(beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness * 5/4, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4);  //The -
+    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness*2);  //Middle line
+    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness * 5/4);   //The -
+    line(beam.center.X + beam.Length/2, beam.center.Y, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness * 2);  //Right extreme
+    rectMode(CENTER);
+    stroke(0.1);
+    strokeWeight(0.1);
+    fill(255);
+    rect(((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2,beam.center.Y - beam.Thickness * 5/4, textWidth(str(pixelX_to_mL_on_beam(mouseX))) + 40 ,(5/4-7/8) * beam.Thickness);
+    rect(((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2,beam.center.Y - beam.Thickness * 5/4, textWidth(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX))) + 40 ,(5/4-7/8) * beam.Thickness);
+    textAlign(CENTER,CENTER);
+    textFont(placerFont);
+    textSize(18);
+    fill(0);
+    text(str(pixelX_to_mL_on_beam(mouseX)), ((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness * 5/4);
+    text(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX)), ((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness * 5/4);
+    strokeWeight(2);
+    stroke(#6EAAAD);
+    ellipse(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4, 2, 2);
+    //Adjusters made
   }
 }
 
@@ -63,9 +89,9 @@ void mouseReleased_Bending_Moment_Screen() {
     force_drag.mouseTrackingMode = false;
     dragging_forces = false;
     float distForce_L = pixelX_to_mL_on_beam(mouseX);
-    doTerminalCommand("NewLoad(10kN," + str(distForce_L) + "L)");
+    doTerminalCommand("NewLoad("+ str(force_drag.magnitude) + "," + str(distForce_L) + "L)");
     terminal.text = "";
-    terminal.placeholder_text = "Enter distance from left (default) or right (Eg : 1L or 2R)";
+    terminal.placeholder_text = "Enter specifics about the load F" + str(beam.loads.size() - 1) + ": Load.F" + str(beam.loads.size() - 1) + ".setTo(<Value>,<Distance>)";
     //Development needed here
   }
 }

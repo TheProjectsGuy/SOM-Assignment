@@ -50,11 +50,15 @@ void keyPressed() {
     if (key != ENTER)
       terminal.keyboardManager();
     else {
-      doTerminalCommand(terminal.text);
-      terminal.text = "";
-      terminal.placeholder_text = "Terminal Console";
+      try {
+        doTerminalCommand(terminal.text);
+      } 
+      finally {
+        terminal.text = "";
+        terminal.placeholder_text = "Terminal Console";
+      }
     }
-  } else if (key == 's') {
+  }  else if (key == 's') {
     doTerminalCommand("NewLoad(25,2L)");
   } else if (key == 'a') {
     beam.AttachForce(-12.5, 1);

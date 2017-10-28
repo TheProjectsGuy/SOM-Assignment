@@ -11,7 +11,7 @@ class Point {
 
 class Force {
   Point head;  //Point
-  float magnitude = 0;
+  float magnitude = 1000;
   String Name = ""; 
   Force() {
   }
@@ -34,18 +34,18 @@ class Force {
   void make() {
     if (!mouseTrackingMode) {
       this.make(this.head);
-    } else {
+    } else {  //Mouse Tracking mode for forces
       this.Line_Color = color(0,0,255);  //Draggable forces have blue colour
       this.make(new Point(mouseX,mouseY));
     }
   }
 
-  void make(Point headAt) {   //
+  void make(Point headAt) {   //Make the arrows
     stroke(Line_Color);
     strokeWeight(Force_stroke_thickness);
     if (magnitude >= 0 && this.mouseTrackingMode == false) {  //Pointing upwards
       textFont(Forces_Font);
-      textSize(10);
+      textSize(18);
       fill(this.Line_Color);
       textAlign(CENTER, BOTTOM);
       text(this.Name, headAt.X, headAt.Y - beam.Thickness / 2 - 5);
@@ -58,7 +58,7 @@ class Force {
       text(this.displayForceMagnitude(), headAt.X, headAt.Y + 55);
     } else if ((magnitude < 0) || this.mouseTrackingMode == true) {  //Pointing downwards
       textFont(Forces_Font);
-      textSize(10);
+      textSize(18);
       fill(this.Line_Color);
       textAlign(CENTER, TOP);
       text(this.Name, headAt.X, headAt.Y + beam.Thickness / 2 + 5);
