@@ -26,34 +26,43 @@ void doTerminalCommand() {
 }
 
 void doTerminalCommand(String command) {
-  switch(command.toUpperCase()) {
-  case "EXIT":
-    exit();
-    break;
-  case "INFO":
-    CURRENT_SCREEN = "Introduction Screen";
-    CURRENT_VIEW = "Introduction";  //Introduction screen
-    break;
-  case "HELP":
-    CURRENT_SCREEN = "Introduction Screen";
-    CURRENT_VIEW = "Help";  //Help Screen
-    break;
-  case "HOME":
-    CURRENT_SCREEN = "Introduction Screen";
-    CURRENT_VIEW = "Home";  //Home Screen
-    terminal.text = "";
-    terminal.text_inTheField = false;
-    terminal.placeholder_text = "Terminal Console";
-    break;
-  case "BEAM.RESET":
-    beam = new Beam(new Point(width/2, height/2), 1, 0.01);
-    break;
-  case "SCREEN.BMA":
-    CURRENT_SCREEN = "Bending Moment Screen";
-    CURRENT_VIEW = "Loading View";
-    break;
-  default:
-    terminal.text = "";
-    break;
+  command = command.toUpperCase();
+  if (command.startsWith("BEAM.")) {  //Beam associated command
+    command = command.substring("BEAM.".length());
+    println("\"" + command + "\"");
+    if (command.equals("RESET")) {
+      beam = new Beam(new Point(width/2, height/2), 1, 0.01);
+    }
+  } else {
+    switch(command) {
+    case "EXIT":
+      exit();
+      break;
+    case "INFO":
+      CURRENT_SCREEN = "Introduction Screen";
+      CURRENT_VIEW = "Introduction";  //Introduction screen
+      break;
+    case "HELP":
+      CURRENT_SCREEN = "Introduction Screen";
+      CURRENT_VIEW = "Help";  //Help Screen
+      break;
+    case "HOME":
+      CURRENT_SCREEN = "Introduction Screen";
+      CURRENT_VIEW = "Home";  //Home Screen  
+      terminal.text = "";
+      terminal.text_inTheField = false;
+      terminal.placeholder_text = "Terminal Console";
+      break;
+    case "BEAM.RESET":
+      beam = new Beam(new Point(width/2, height/2), 1, 0.01);
+      break;
+    case "SCREEN.BMA":
+      CURRENT_SCREEN = "Bending Moment Screen";
+      CURRENT_VIEW = "Loading View";  //Show the Bengind Moment screen : Introduction 
+      break;
+    default:
+      terminal.text = "";
+      break;
+    }
   }
 }

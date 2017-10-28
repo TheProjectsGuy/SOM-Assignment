@@ -19,45 +19,55 @@ class Force {
     this.magnitude = Value;
   }
 
-  float distance_L;
+  float distance_L;  //Distance from left in meters
   void distance_L(float dist) {
     this.distance_L = dist;
   }
+
+
 
   color Line_Color = color(0);
   float Force_stroke_thickness = 1.5;
   boolean mouseTrackingMode = false;
 
   void make() {
+    this.make(this.head);
+  }
+
+  void make(Point headAt) { 
     stroke(Line_Color);
     strokeWeight(Force_stroke_thickness);
     if (magnitude >= 0) {  //Pointing upwards
       textFont(Forces_Font);
       textSize(20);
       fill(this.Line_Color);
-      textAlign(CENTER,BOTTOM);
-      text(this.Name, head.X, head.Y - beam.Thickness / 2 - 5);
-      line(head.X, head.Y, head.X - 10 * sin(radians(30)), head.Y + 10 * cos(radians(30)));
-      line(head.X, head.Y, head.X + 10 * sin(radians(30)), head.Y + 10 * cos(radians(30)));
-      line(head.X, head.Y, head.X, head.Y + 50);
+      textAlign(CENTER, BOTTOM);
+      text(this.Name, headAt.X, headAt.Y - beam.Thickness / 2 - 5);
+      line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
+      line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
+      line(headAt.X, headAt.Y, headAt.X, headAt.Y + 50);
       textFont(Forces_Font);
       textAlign(CENTER, TOP);
       textSize(25);
-      text(str(abs(magnitude)) + "N", head.X, head.Y + 55);
+      text(str(abs(magnitude)) + "N", headAt.X, headAt.Y + 55);
     } else if (magnitude < 0) {  //Pointing downwards
       textFont(Forces_Font);
       textSize(20);
       fill(this.Line_Color);
-      textAlign(CENTER,TOP);
-      text(this.Name, head.X, head.Y + beam.Thickness / 2 + 5);
-      line(head.X, head.Y, head.X - 10 * sin(radians(30)), head.Y - 10 * cos(radians(30)));
-      line(head.X, head.Y, head.X + 10 * sin(radians(30)), head.Y - 10 * cos(radians(30)));
-      line(head.X, head.Y, head.X, head.Y - 50);
+      textAlign(CENTER, TOP);
+      text(this.Name, headAt.X, headAt.Y + beam.Thickness / 2 + 5);
+      line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
+      line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
+      line(headAt.X, headAt.Y, headAt.X, headAt.Y - 50);
       textFont(Forces_Font);
       textAlign(CENTER, BOTTOM);
       textSize(25);
-      text(str(abs(magnitude)) + "N", head.X, head.Y - 55);
+      text(str(abs(magnitude)) + "N", headAt.X, headAt.Y - 55);
     }
+  }
+
+  void make(Point centerAt, float Length_m, float distance_L_m) {  //For the beam adjustment
+    this.make(new Point(centerAt.X - m_to_pixel(Length_m/2) + m_to_pixel(distance_L_m), centerAt.Y));
   }
 }
 
@@ -112,20 +122,30 @@ class Beam {
   }
 
   void centerAt(Point center) {
-    this.center = center;
-    support_A = new Force(new Point(this.center.X - this.Length/2, this.center.Y), 0);
-    support_A.Line_Color = color(255, 0, 0);
-    support_A.Force_stroke_thickness = 2;
-    support_B = new Force(new Point(this.center.X + this.Length/2, this.center.Y), 0);
-    support_B.Line_Color = color(255, 0, 0);
-    support_B.Force_stroke_thickness = 2;
-    support_A.distance_L(0);
-    support_B.distance_L(this.Length);
-    support_A.Name = "A";
-    support_B.Name = "B";
-    support_A.Force_stroke_thickness = 2;
-    support_B.Force_stroke_thickness = 2;
-    println("The center is " + str(this.center.X));
+    centerAt(center, false);
+  }
+
+  void centerAt(Point center, boolean previousDataExists) {
+    if (previousDataExists) {
+      this.center = center;
+      support_A.head = new Point(this.center.X - this.Length/2, this.center.Y);
+      support_B.head = new Point(this.center.X + this.Length/2, this.center.Y);
+    } else {
+      this.center = center;
+      support_A = new Force(new Point(this.center.X - this.Length/2, this.center.Y), 0);
+      support_A.Line_Color = color(255, 0, 0);
+      support_A.Force_stroke_thickness = 2;
+      support_B = new Force(new Point(this.center.X + this.Length/2, this.center.Y), 0);
+      support_B.Line_Color = color(255, 0, 0);
+      support_B.Force_stroke_thickness = 2;
+      support_A.distance_L(0);
+      support_B.distance_L(this.Length);
+      support_A.Name = "A";
+      support_B.Name = "B";
+      support_A.Force_stroke_thickness = 2;
+      support_B.Force_stroke_thickness = 2;
+      println("The center is " + str(this.center.X));
+    }
   }
 
   boolean mouseTrackingMode = false;
@@ -135,19 +155,19 @@ class Beam {
   float stroke_thickness = 2;
 
   void draw_beam() {
-    if (mouseTrackingMode) {
-      this.centerAt(new Point(mouseX, mouseY));
+    if (this.mouseTrackingMode) {  //Mouse holding the beam
+      this.centerAt(new Point(mouseX, mouseY), true);
     }
     stroke(stroke_color);
     strokeWeight(stroke_thickness);
     fill(fill_color);
     rectMode(CENTER);
     rect(center.X, center.Y, Length, Thickness);
+    for (Force load : loads) {
+      load.make(this.center, this.Length_m, load.distance_L);
+    }
     support_A.make();
     support_B.make();
-    for (Force load : loads) {
-      load.make();
-    }
   }
 }
 

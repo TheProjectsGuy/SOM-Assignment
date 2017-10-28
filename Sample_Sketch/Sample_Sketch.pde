@@ -6,7 +6,7 @@
 UITextField terminal;
 
 String CURRENT_SCREEN = "Introduction Screen";
-String CURRENT_VIEW = "Home";
+String CURRENT_VIEW = "Home";  //Starting screen
 
 boolean mouseHolding = false;  //Stores if mouse is holding anything or not
 
@@ -19,7 +19,7 @@ void setup() {
   fullScreen();
 }
 
-int i = 255, MODE = 1;
+
 
 void draw() {
   switch (CURRENT_SCREEN) {
@@ -49,10 +49,13 @@ void keyPressed() {
   if (terminal.selected) {
     if (key != ENTER)
       terminal.keyboardManager();
-    else
+    else {
       doTerminalCommand(terminal.text);
+      terminal.text = "";
+      terminal.placeholder_text = "Terminal Console";
+    }
   } else if (key == 's') {
-    beam.AttachForce(-25,2);
+    beam.AttachForce(-25, 2);
   } else if (key == 'a') {
     beam.AttachForce(-12.5, 1);
   }

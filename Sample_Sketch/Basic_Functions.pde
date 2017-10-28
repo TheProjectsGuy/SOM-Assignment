@@ -22,22 +22,22 @@ void attach_images() {  //Attach Images
 
 void Make_Essentials() {  //Essential Buttons
   imageMode(CORNER);
-  CloseButtonEssential();
+  CloseButtonEssential();  //CLOSE Button
   if (CURRENT_SCREEN == "Introduction Screen" && CURRENT_VIEW == "Home") {
-    HelpButtongEssential();
-    InfoButtonEssential();
+    HelpButtongEssential();  //Help Button
+    InfoButtonEssential();  //Info Button
   } else {
-    HomeButtonEssential();
+    HomeButtonEssential();  //Home Button
   }
 
-  TerminalEssential();
+  TerminalEssential();  //Terminal Button
 }
 
 void HomeButtonEssential() {  //Essential : Home button
   imageMode(CORNER);
   image(home_icon, 40, 0, 32, 32);
   if (mouseX <= 40 + 32 && mouseX >= 40 && mouseY <= 32 && mousePressed && !mouseHolding) {
-    doTerminalCommand("HOME");
+    doTerminalCommand("home");
   }
 }
 

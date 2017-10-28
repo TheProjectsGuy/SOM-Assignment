@@ -6,7 +6,7 @@ void Bending_Moment_Screen_navigator() {
   terminal.placeholder_text = "Drag and drop forces";
   switch (CURRENT_VIEW) {
     case "Loading View":
-      Starting_screen_BMA();
+      Starting_screen_BMA();  //Loading the beam and information. Also, user adds the loads here
     break;
   }
 }

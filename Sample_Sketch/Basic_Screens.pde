@@ -11,6 +11,7 @@ void Introduction_screen_navigator() {
   case "Home":
     Startup_Screen();
     break;
+    //Info and Help pending...
   default:
     Error_screen_navigator();
     break;
@@ -19,8 +20,9 @@ void Introduction_screen_navigator() {
 
 PImage BMA_icon;
 
+int i = 255, MODE = 1;  //For background colour to adjust
 void Startup_Screen() {
-  background(i, i, i);
+  background(i, i, i);  //Background colour
   if (i >= 255) MODE = -1;
   if (i <= 0) MODE = 1;
   switch(MODE) {
@@ -39,7 +41,7 @@ void Startup_Screen() {
   text("Bending Moment Software", width/2, height/10);
   delay(10);
   //Startup code loaded
-  //Option : Bending Moment Analysis
+  //Option : Bending Moment Analysis : Goes to the Introduction
   imageMode(CENTER);
   image(BMA_icon, width/2, height * 0.30);  //Unhovered
   if (mouseX <= BMA_icon.width / 2 + width/2 && mouseX >= width/2 - BMA_icon.width/2 && mouseY <= BMA_icon.height / 2 + height * 0.30 && mouseY >= height * 0.30 - BMA_icon.height/2) {
@@ -47,7 +49,7 @@ void Startup_Screen() {
       BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_hovered.png");
     if (mousePressed) {
       BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_clicked.png");
-      doTerminalCommand("SCREEN.BMA");
+      doTerminalCommand("SCREEN.BMA");  
     }
   } else {
     BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_unhovered.png");
