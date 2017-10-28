@@ -34,7 +34,7 @@ class Force {
     this.make(this.head);
   }
 
-  void make(Point headAt) { 
+  void make(Point headAt) {   //
     stroke(Line_Color);
     strokeWeight(Force_stroke_thickness);
     if (magnitude >= 0) {  //Pointing upwards
@@ -45,11 +45,11 @@ class Force {
       text(this.Name, headAt.X, headAt.Y - beam.Thickness / 2 - 5);
       line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
-      line(headAt.X, headAt.Y, headAt.X, headAt.Y + 50);
+      line(headAt.X, headAt.Y, headAt.X, headAt.Y + 50);  
       textFont(Forces_Font);
       textAlign(CENTER, TOP);
       textSize(25);
-      text(str(abs(magnitude)) + "N", headAt.X, headAt.Y + 55);
+      text(this.displayForceMagnitude(), headAt.X, headAt.Y + 55);
     } else if (magnitude < 0) {  //Pointing downwards
       textFont(Forces_Font);
       textSize(20);
@@ -58,16 +58,24 @@ class Force {
       text(this.Name, headAt.X, headAt.Y + beam.Thickness / 2 + 5);
       line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
-      line(headAt.X, headAt.Y, headAt.X, headAt.Y - 50);
+      line(headAt.X, headAt.Y, headAt.X, headAt.Y - 50); 
       textFont(Forces_Font);
       textAlign(CENTER, BOTTOM);
       textSize(25);
-      text(str(abs(magnitude)) + "N", headAt.X, headAt.Y - 55);
+      text(this.displayForceMagnitude(), headAt.X, headAt.Y - 55);
     }
   }
 
-  void make(Point centerAt, float Length_m, float distance_L_m) {  //For the beam adjustment
+  void make(Point centerAt, float Length_m, float distance_L_m) {  //For the beam adjustment -> TO ADJUST ALL LOADS (adjust loads)
     this.make(new Point(centerAt.X - m_to_pixel(Length_m/2) + m_to_pixel(distance_L_m), centerAt.Y));
+  }
+
+  String displayForceMagnitude() {
+    if (abs(magnitude) <= 100)
+      return str(abs(magnitude)) + "N";
+    else {
+      return str(abs(magnitude)/1000) + "kN";
+    }
   }
 }
 
@@ -81,6 +89,12 @@ class Beam {
     if (point.X <= center.X + Length/2 && point.X >= center.X - Length/2 && point.Y <= center.Y + Thickness/2 && point.Y >= center.Y - Thickness/2)
       return true;
     return false;
+  }
+
+  void setLength_m(float length_m) {
+    Length_m = length_m;
+    Length = m_to_pixel(length_m);
+    this.centerAt(this.center, true);  //To reset the end supports to calibrate with the beam, but don't change their values
   }
 
   float Length, Thickness;
@@ -106,7 +120,7 @@ class Beam {
     for (Force load : loads) {
       support_B.magnitude += -load.magnitude * load.distance_L;
       support_A.magnitude += -load.magnitude * (this.Length_m - load.distance_L);
-      println(str(this.Length_m) + "," + load.distance_L);
+      //println(str(this.Length_m) + "," + load.distance_L);
     }
     support_B.magnitude /= this.Length_m;
     support_A.magnitude /= this.Length_m;

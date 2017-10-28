@@ -55,7 +55,7 @@ void keyPressed() {
       terminal.placeholder_text = "Terminal Console";
     }
   } else if (key == 's') {
-    beam.AttachForce(-25, 2);
+    doTerminalCommand("NewLoad(25,2L)");
   } else if (key == 'a') {
     beam.AttachForce(-12.5, 1);
   }

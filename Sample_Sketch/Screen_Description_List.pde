@@ -26,13 +26,38 @@ void doTerminalCommand() {
 }
 
 void doTerminalCommand(String command) {
+  command.replaceAll(" ", "");  //No SPACES in Terminal
   command = command.toUpperCase();
   if (command.startsWith("BEAM.")) {  //Beam associated command
-    command = command.substring("BEAM.".length());
+    command = command.substring("BEAM.".length());  //Beam function obtained
     println("\"" + command + "\"");
     if (command.equals("RESET")) {
       beam = new Beam(new Point(width/2, height/2), 1, 0.01);
+    } else if (command.startsWith("SETLENGTH(")) {
+      beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
+      
     }
+  } else if (command.startsWith("NewLoad(".toUpperCase())) {  //New load added
+    command = command.substring("NewLoad(".length(), command.length() - 1);
+    String[] arguments = split(command, ',');
+    println(arguments);
+    float magnitude, dist_L;
+    if (arguments[0].endsWith("kN".toUpperCase())) {
+      magnitude = -float(arguments[0].substring(0, arguments[0].length() - 2)) * 1e3;  //Entry in kN
+    } else {
+      if (arguments[0].endsWith("N")) 
+        arguments[0] = arguments[0].substring(0, arguments[0].length() - 1);
+      magnitude = -float(arguments[0].substring(0));
+    }
+    if (arguments[1].endsWith("R")) {
+      dist_L = beam.Length_m - float(arguments[1].substring(0, arguments[1].length() - 1));
+    } else {
+      if (arguments[1].endsWith("L"))
+        arguments[1] = arguments[1].substring(0, arguments[1].length() - 1);
+      dist_L = float(arguments[1]);
+    }
+    println(str(magnitude) + " at L : " + dist_L);
+    beam.AttachForce(magnitude, dist_L);
   } else {
     switch(command) {
     case "EXIT":
