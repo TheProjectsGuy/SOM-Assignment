@@ -5,8 +5,6 @@
 
 UITextField terminal;
 
-PImage close_icon, info_icon;
-
 String CURRENT_SCREEN = "Introduction Screen";
 String CURRENT_VIEW = "Home";
 
@@ -16,7 +14,7 @@ void setup() {
   //Setting up the fonts package
   setup_Fonts();
   attach_images();
-  
+
   initialize_variables();
   fullScreen();
 }
@@ -28,7 +26,7 @@ void draw() {
   case "Introduction Screen":
     Introduction_screen_navigator();
     break;
-    case "Bending Moment Screen":
+  case "Bending Moment Screen":
     Bending_Moment_Screen_navigator();
     break;
   default:
@@ -41,20 +39,21 @@ void draw() {
 
 void mouseReleased() {
   switch(CURRENT_SCREEN) {
-    case "Bending Moment Screen":
-      mouseReleased_Bending_Moment_Screen();
+  case "Bending Moment Screen":
+    mouseReleased_Bending_Moment_Screen();
     break;
   }
 }
 
 void keyPressed() {
   if (terminal.selected) {
-    terminal.keyboardManager();
-  }
-  else if (key == 's') {
-    beam.AttachForce(-50,beam.Length_m/2);
-  }
-  else if (key == 'a') {
-    beam.AttachForce(-25,beam.Length_m/4);
+    if (key != ENTER)
+      terminal.keyboardManager();
+    else
+      doTerminalCommand(terminal.text);
+  } else if (key == 's') {
+    beam.AttachForce(-25,2);
+  } else if (key == 'a') {
+    beam.AttachForce(-12.5, 1);
   }
 }

@@ -1,10 +1,8 @@
-
 Force support_A, support_B;
 
 Beam beam;
 
 void Bending_Moment_Screen_navigator() {
-  terminal.clearUITextField();
   terminal.placeholder_text = "Drag and drop forces";
   switch (CURRENT_VIEW) {
     case "Loading View":

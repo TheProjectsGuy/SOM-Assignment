@@ -65,6 +65,7 @@ class UITextField {
 
   void fillTextIntoRectangle() {
     textSize(text_Size);
+    textFont(UITextField_TextFont);
     fill((text_inTheField == true) ? label_textColor : label_placeholderTextColor);  //Color of text to write
     textAlign(LEFT, TOP);
     String textToDisplay = (text_inTheField == true) ? text : placeholder_text;
