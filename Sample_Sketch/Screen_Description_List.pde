@@ -36,6 +36,9 @@ void doTerminalCommand(String command) {
       beam = new Beam(new Point(width/2, height/2), 4, 0.1);
     } else if (command.startsWith("SETLENGTH(")) {  //Setlength :-> Beam.SetLength(%NUMBER%)
       beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
+    } else if (command.startsWith("CLEAR")) {  //:-> Beam.clear
+      beam.loads.clear();
+      beam.calculateReactionForces();
     }
   } else if (command.startsWith("NewLoad(".toUpperCase())) {  //:-> NewLoad(%NUMBER% <N*/kN>, %Distance_m% <L*/R>)  
     //New load added
@@ -68,17 +71,18 @@ void doTerminalCommand(String command) {
     }
     command = command.substring("LOAD.".length());
     String forceName = command.substring(0, command.indexOf("."));
+    //Find the force with same name
     int replacing_index = 0;
     Force F_compare;
     for (int index = 0; index < beam.loads.size(); index++) {
       F_compare = beam.loads.get(index);
       if (forceName.equals(F_compare.Name)) {
-        replacing_index = index;
+        replacing_index = index;  //Found the name
         break;
       }
     }
-    command = command.substring(forceName.length());
-    if (command.startsWith(".setTo(".toUpperCase())) {
+    command = command.substring(forceName.length());  //.<Function>(<Parameters>)
+    if (command.startsWith(".setTo(".toUpperCase())) {    //:-> loads.<Name>.setTo(Parameters)
       command = command.substring(".setTo(".length(), command.length() - 1);
       //We have %NUMBER% <N*/kN>, %Distance_m% <L*/R>
       F_compare = beam.loads.get(replacing_index);
@@ -103,6 +107,7 @@ void doTerminalCommand(String command) {
       beam.loads.remove(replacing_index);
       beam.loads.add(replacing_index, F_compare);
       beam.calculateReactionForces();
+      beam.adjustIndexes();
     }
   } else if (command.startsWith("SCREEN.")) {  
     //Screen segue

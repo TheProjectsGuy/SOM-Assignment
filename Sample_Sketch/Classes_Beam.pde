@@ -15,7 +15,9 @@ class Force {
   String Name = ""; 
   Force() {
   }
-
+  
+  int indexOnBeam;  //1,2,3...
+  
   Force(Point action_point, float Value) {
     this.head = action_point;
     this.magnitude = Value;
@@ -35,8 +37,8 @@ class Force {
     if (!mouseTrackingMode) {
       this.make(this.head);
     } else {  //Mouse Tracking mode for forces
-      this.Line_Color = color(0,0,255);  //Draggable forces have blue colour
-      this.make(new Point(mouseX,mouseY));
+      this.Line_Color = color(0, 0, 255);  //Draggable forces have blue colour
+      this.make(new Point(mouseX, mouseY));
     }
   }
 
@@ -115,11 +117,40 @@ class Beam {
     load.Line_Color = color(0, 0, 255);
     load.Name = "F" + str(loads.size() + 0);
     loads.add(load);
-    println("Attaching a force of magnitude " + str(load.magnitude) + " at " + str(load.head.X));
+    println("Attaching a force of magnitude " + str(load.magnitude) + " at " + str(load.head.X) + " index : " + str(load.indexOnBeam));
     calculateReactionForces();
+    this.adjustIndexes();
   }
-
-
+  
+  void adjustIndexes() {
+    support_A.indexOnBeam = 0;
+    support_B.indexOnBeam = this.loads.size() + 1;  //end forces
+    
+    Force[] array_Forces = new Force[this.loads.size()];
+    for (int i = 0 ; i < this.loads.size(); i++) {
+      array_Forces[i] = this.loads.get(i);
+    }
+    //Now, sort with index
+    for (int i = 0 ; i < array_Forces.length - 1; i++) {
+      for (int j = 0 ; j < array_Forces.length - i - 1; j++) {
+        if (array_Forces[j].distance_L > array_Forces[j+1].distance_L) {
+          Force f = array_Forces[j];
+          array_Forces[j] = array_Forces[j+1];
+          array_Forces[j+1] = f;
+        }
+      }
+    }
+    //Array sorted
+    for (int i = 0; i < this.loads.size(); i++) {
+      this.loads.remove(i);
+      array_Forces[i].indexOnBeam = i + 1;
+      this.loads.add(i,array_Forces[i]);
+    }
+    for (Force f : this.loads) {
+      println(str(f.magnitude) + " at " + str(f.indexOnBeam)); 
+    }
+  }
+  
   void calculateReactionForces() {
     support_B.magnitude = 0;
     support_A.magnitude = 0;  
@@ -164,6 +195,8 @@ class Beam {
       support_B.Name = "B";
       support_A.Force_stroke_thickness = 2;
       support_B.Force_stroke_thickness = 2;
+      support_A.indexOnBeam = 0;
+      support_B.indexOnBeam = 1;
       println("The center is " + str(this.center.X));
     }
   }
@@ -189,15 +222,15 @@ class Beam {
     support_A.make();
     support_B.make();
   }
+
+  BeamSpecifications beamSpecifications;
 }
 
 //Takes care of all the maths and fuzz about the beam
 class BeamSpecifications {
-  float Max_Distance_From_Neutral_Axis = 0;
   Material material;
   float SectionModulus = 0;
-  ArrayList<Float> Bending_Moments = new ArrayList<Float>();  //Bending moments at every point force
-  
+  float maximum_BendingMoment;
 }
 
 class Material {
@@ -210,3 +243,8 @@ class Material {
 }
 
 //Material List needed
+
+float plotBendingMomentDiagram() {
+  //WORK REQUIRED HERE
+  return 0;
+}
