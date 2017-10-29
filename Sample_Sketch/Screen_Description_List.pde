@@ -39,6 +39,12 @@ void doTerminalCommand(String command) {
     } else if (command.startsWith("CLEAR")) {  //:-> Beam.clear
       beam.loads.clear();
       beam.calculateReactionForces();
+    } else if (command.startsWith("MAKEGRAPH")) {  //Make the graph :-> Beam.MakeGraph
+      CURRENT_SCREEN = "Bending Moment Screen";
+      CURRENT_VIEW = "Grapher View";
+      beam.centerAt(new Point(width/2, height/6), true);  //Previous data exists
+      println(beam.makeGraph_getPoints());
+      beam.makeGraph();
     }
   } else if (command.startsWith("NewLoad(".toUpperCase())) {  //:-> NewLoad(%NUMBER% <N*/kN>, %Distance_m% <L*/R>)  
     //New load added
@@ -103,10 +109,12 @@ void doTerminalCommand(String command) {
         dist_L = float(arguments[1]);
       }
       F_compare.magnitude = magnitude;
-      F_compare.distance_L = dist_L;
+      //F_compare.distance_L = dist_L;
+      F_compare.distance_L(dist_L);
       beam.loads.remove(replacing_index);
       beam.loads.add(replacing_index, F_compare);
       beam.calculateReactionForces();
+      beam.makeGraph_getPoints();
       beam.adjustIndexes();
     }
   } else if (command.startsWith("SCREEN.")) {  

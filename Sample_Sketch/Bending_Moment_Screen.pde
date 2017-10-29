@@ -3,12 +3,16 @@ Beam beam;
 boolean dragging_forces = false;
 Force force_drag = new Force();
 
+PImage BMA_done;
+
 void Bending_Moment_Screen_navigator() {
+  background(255, 255, 255);
   if (!dragging_forces && beam.loads.size() == 0)
     terminal.placeholder_text = "Drag and drop forces";
   else if (beam.loads.size() == 0) {
     terminal.placeholder_text = "Force grabbed";
   }
+  Bending_Moment_Screen_essential_buttons();
   switch (CURRENT_VIEW) {
   case "Loading View":
     Starting_screen_BMA();  //Loading the beam and information. Also, user adds the loads here
@@ -37,14 +41,13 @@ void load_drag_drop_arrows() {
 PFont placerFont;
 
 void Starting_screen_BMA() {
-  background(255, 255, 255);
   beam.draw_beam();
   load_drag_drop_arrows();
   if (mouseX <= headAt.X + 15 && mouseX >= headAt.X - 15 && mouseY <= headAt.Y + 10 && mouseY >= headAt.Y - 50 - 10 && mousePressed && !mouseHolding) {  //If user click inside the rect
     dragging_forces = true;
     mouseHolding = true;
   }
-  if (dragging_forces) {
+  if (dragging_forces) {  //Make adjusters
     force_drag.mouseTrackingMode = true;
     force_drag.make();  //Dragging the force
     //making the adjusters
@@ -75,9 +78,19 @@ void Starting_screen_BMA() {
 }
 
 void Starting_screen_with_grapher() {  
+  Starting_screen_BMA();
   if (beam.pointInsideBeam(new Point(mouseX, mouseY)) && mousePressed && !mouseHolding) {  //If user clicks the beam, he can drag it using this : Drag and drop Beam
     beam.mouseTrackingMode = true;
     mouseHolding = true;
+  }
+  beam.makeGraph(); //Heavy graphing is done here
+}
+
+void Bending_Moment_Screen_essential_buttons() {
+  imageMode(CENTER);
+  image(BMA_done, width - 72, height * 3/4, 72, 72);
+  if (mouseX <= width - 72 + 72/2 && mouseX >= width - 72 - 72/2 && mouseY <= height * 3/4 + 72/2 && mouseY >= height * 3/4 - 72/2 && mousePressed && !mouseHolding) {
+    doTerminalCommand("BEAM.MAKEGRAPH");
   }
 }
 

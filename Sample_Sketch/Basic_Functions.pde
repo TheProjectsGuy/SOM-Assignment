@@ -1,10 +1,13 @@
+PFont Grapher_text_font;
 void setup_Fonts() {  //Font setup module
   Baisc_Screens_LoadingFont = loadFont("AgencyFB-Bold-100.vlw");
   //Forces_Font = loadFont("Arial-BoldMT-50.vlw");  
-  Forces_Font = loadFont("JavaneseText-25.vlw");
+  Forces_Font = loadFont("Corbel-Bold-30.vlw");
   UITextField_TextFont = loadFont("CenturyGothic-30.vlw");
   Error_MessageFont = loadFont("Constantia-Bold-100.vlw");
   placerFont = loadFont("Consolas-20.vlw");
+  //Grapher_text_font = loadFont("Garamond-20.vlw");
+  Grapher_text_font = loadFont("Gadugi-Bold-20.vlw");
 }
 
 PImage close_icon, info_icon, help_icon, home_icon, terminal_clear_icon;
@@ -20,6 +23,9 @@ void attach_images() {  //Attach Images
 
   //Error Screen Navigator Error Icon
   Error_icon_ESN = loadImage("data/error.png");
+  
+  //Bending Moment Analysis Screen
+  BMA_done = loadImage("data/Buttons/Bending Moment Analysis/showGraph.png");
 }
 
 void Make_Essentials() {  //Essential Buttons
