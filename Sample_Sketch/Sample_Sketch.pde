@@ -58,6 +58,9 @@ void keyPressed() {
         terminal.placeholder_text = "Terminal Console";
       }
     }
+  } else if (key == 'T' || key == 't') {
+    terminal.selected = true;
+    terminal.text_inTheField = true;
   }
   //}  else if (key == 's') {
   //  doTerminalCommand("NewLoad(25,2L)");

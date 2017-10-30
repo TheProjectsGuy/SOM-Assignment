@@ -35,6 +35,10 @@ void doTerminalCommand(String command) {
     if (command.equals("RESET")) {  //reset :-> Beam.reset
       beam = new Beam(new Point(width/2, height/2), 4, 0.1);
       doTerminalCommand("SCREEN.BMA");
+    } else if (command.equals("INFO")) {  // :-> Beam.info
+      CURRENT_SCREEN = "Bending Moment Screen";
+      CURRENT_VIEW = "Beam Information";
+      beam.centerAt(new Point(width/2, height/9), true);
     } else if (command.startsWith("SETLENGTH(")) {  //Setlength :-> Beam.SetLength(%NUMBER%)
       beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
     } else if (command.startsWith("CLEAR")) {  //:-> Beam.clear
@@ -122,7 +126,6 @@ void doTerminalCommand(String command) {
         dist_L = F_compare.distance_L;
       }
       F_compare.magnitude = magnitude;
-      //F_compare.distance_L = dist_L;
       F_compare.distance_L(dist_L);
       beam.loads.remove(replacing_index);
       beam.loads.add(replacing_index, F_compare);
@@ -131,9 +134,9 @@ void doTerminalCommand(String command) {
       beam.adjustIndexes();
     } else if (command.startsWith("remove".toUpperCase())) {  //:-> load.<NAME>.remove
       beam.loads.remove(replacing_index);
+      beam.adjustIndexes();
       beam.calculateReactionForces();
       beam.makeGraph_getPoints();
-      beam.adjustIndexes();
       println("Removed " + forceName);
     }
   } else if (command.startsWith("SCREEN.")) {  

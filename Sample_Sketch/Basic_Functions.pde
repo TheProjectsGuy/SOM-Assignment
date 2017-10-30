@@ -8,6 +8,8 @@ void setup_Fonts() {  //Font setup module
   placerFont = loadFont("Consolas-20.vlw");
   //Grapher_text_font = loadFont("Garamond-20.vlw");
   Grapher_text_font = loadFont("Gadugi-Bold-20.vlw");
+  //Info Screen font
+  BMA_Info_Font = loadFont("ArialMT-32.vlw");
 }
 
 PImage close_icon, info_icon, help_icon, home_icon, terminal_clear_icon;
@@ -34,6 +36,7 @@ void attach_images() {  //Attach Images
 void Make_Essentials() {  //Essential Buttons
   imageMode(CORNER);
   CloseButtonEssential();  //CLOSE Button
+  
   if (CURRENT_SCREEN == "Introduction Screen" && CURRENT_VIEW == "Home") {
     HelpButtongEssential();  //Help Button
     InfoButtonEssential();  //Info Button

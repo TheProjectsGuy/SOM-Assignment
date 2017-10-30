@@ -22,8 +22,11 @@ void Bending_Moment_Screen_navigator() {
   case "Loading View":
     Starting_screen_BMA();  //Loading the beam and information. Also, user adds the loads here
     break;
-  case "Grapher View":
+  case "Grapher View":  //The graph is shown here
     Starting_screen_with_grapher();
+    break;
+  case "Beam Information":  //Beam information shown here
+    Beam_Information_Screen();
     break;
   }
 }
@@ -91,15 +94,47 @@ void Starting_screen_with_grapher() {
   beam.makeGraph(); //Heavy graphing is done here
 }
 
+PFont BMA_Info_Font;
+
+void Beam_Information_Screen() {
+  beam.draw_beam();
+  stroke(127);
+  strokeWeight(5);
+  ellipse(beam.center.X - beam.Length/2, height/6 + 70, 3, 3);
+  ellipse(beam.center.X + beam.Length/2, height/6 + 70, 3, 3);
+  strokeWeight(0.25);
+  stroke(100);
+  line(beam.center.X - beam.Length/2, height/6 + 70, beam.center.X + beam.Length/2, height/6 + 70);
+  fill(0);
+  textAlign(CENTER,CENTER);
+  textFont(BMA_Info_Font);
+  textSize(13);
+  text(str(beam.Length_m) + " m", beam.center.X, height/6 + 70);
+  textSize(20);
+  textLeading(25);
+  text(beam.description(),width/2,height/2);
+  stroke(0);
+  strokeWeight(3);
+  noFill();
+  rectMode(CENTER);
+  rect(width/2, height/2 + 55, width * 4/5, height * 2/3);
+}
+
 //Buttons essential to this screen only
 void Bending_Moment_Screen_essential_buttons() {  
-  imageMode(CENTER);
-  image(BMA_done, width - 72, height * 3/4, 72, 72);   //Make graph
-  if (mouseX <= width - 72 + 72/2 && mouseX >= width - 72 - 72/2 && mouseY <= height * 3/4 + 72/2 && mouseY >= height * 3/4 - 72/2 && mousePressed && !mouseHolding) {
-    doTerminalCommand("BEAM.MAKEGRAPH");
+  if (CURRENT_VIEW != "Beam Information") {
+    imageMode(CENTER);
+    image(BMA_done, width - 72, height * 3/4, 72, 72);   //Make graph
+    if (mouseX <= width - 72 + 72/2 && mouseX >= width - 72 - 72/2 && mouseY <= height * 3/4 + 72/2 && mouseY >= height * 3/4 - 72/2 && mousePressed && !mouseHolding) {
+      doTerminalCommand("BEAM.MAKEGRAPH");
+    }
   }
+  //Info about beam
   imageMode(CORNER);
-  image(Analyze_beam_icon, beam.center.X - beam.Length/2 - 20 - 90, beam.center.Y + beam.Thickness_Left_View / 2 + 20, 90, 90);
+  image(Analyze_beam_icon, 0, beam.center.Y + beam.Thickness_Left_View / 2 + 20, 60, 60);
+  if (mouseX < 60 && mouseY >= beam.center.Y + beam.Thickness_Left_View / 2 + 20 && mouseY <= beam.center.Y + beam.Thickness_Left_View / 2 + 20 + 60 && mousePressed && !mouseHolding) {
+    doTerminalCommand("beam.info");
+  }
 }
 
 void mouseReleased_Bending_Moment_Screen() {

@@ -291,7 +291,7 @@ class Beam {
     rectMode(CENTER);
     stroke(0);
     strokeWeight(1.5);
-    line(graphCenter.X - graphLength/2, graphCenter.Y, graphCenter.X + graphLength/2, graphCenter.Y);
+    line(graphCenter.X - graphLength/2, graphCenter.Y, graphCenter.X + graphLength/2, graphCenter.Y);  //X Axis
     noFill();
     strokeWeight(2);
     rect(graphCenter.X, graphCenter.Y, graphLength, graphHeight);  //Frame rectangle
@@ -299,14 +299,17 @@ class Beam {
       stroke(0);
       strokeWeight(1.5);
       float Scale_Yaxis = 0;  //These many pixels = 1 Nm bending moment
-      if (abs(MinimumBendingMomentInBeam) < MaximumBendingMomentInBeam) {
-        Scale_Yaxis = graphHeight/2 * 0.9/MaximumBendingMomentInBeam;
+      if (-MinimumBendingMomentInBeam < MaximumBendingMomentInBeam) {
+        Scale_Yaxis = graphHeight/2.0 * 0.9/MaximumBendingMomentInBeam;
       } else {
-        Scale_Yaxis = graphHeight/2 * 0.9/MinimumBendingMomentInBeam;
+        Scale_Yaxis = -graphHeight/2 * 0.9/MinimumBendingMomentInBeam;  //- because MinimumBendingMomentInBeam is negative
       }
+      //Y axis lines
+      
       textAlign(RIGHT, BOTTOM);
       textSize(15);
       fill(#FF0000);
+      //Making the lines
       for (Force F : this.loads) {
         if (F.indexOnBeam == 1) {  //Starting
           line(this.center.X - this.Length/2, graphCenter.Y, this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis);
@@ -343,6 +346,18 @@ class Beam {
   }
   
   
+  //Description of a beam
+  String description() {
+    String des = "";
+    des = "Beam Length : " + this.Length_m + " m\n" + 
+          "Beam Thickness (in left view) : " + this.Thickness_Left_View_m + " m\n" +
+          "Beam Material : \"" + this.material.Name + "\" (Maximum stress = " + String.format("%.3E",material.Max_Stress) + " N/m^2)\n" +
+          "The maximum bending moment in beam is : " + getStringFormat_BendingMoment(this.MaximumBendingMomentInBeam) + " \n" + 
+          
+          "The Section Modulus required is : " + String.format("%.2E",this.SectionModulus) + " m^3" + 
+          "\n";
+    return des;
+  }
 }
 
 String getStringFormat_BendingMoment(float number) {
@@ -371,7 +386,7 @@ class Material {
     this.Max_Stress = Max_stress;
   }
   String description_String() {
-    return "Name : " + this.Name + "\n" +  str(Max_Stress);
+    return "Name : " + this.Name + "\n" +   String.format("%.3E",this.Max_Stress) + " N/m^2)";
   }
 }
 
