@@ -52,7 +52,9 @@ void keyPressed() {
     else {
       try {
         doTerminalCommand(terminal.text);
-      } 
+      } catch (Exception e) {
+        println("ERROR");
+      }
       finally {
         terminal.text = "";
         terminal.placeholder_text = "Terminal Console";

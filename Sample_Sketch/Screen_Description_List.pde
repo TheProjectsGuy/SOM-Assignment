@@ -74,7 +74,12 @@ void doTerminalCommand(String command) {
       dist_L = float(arguments[1]);
     }
     println(str(magnitude) + " at L : " + dist_L);
+    if (magnitude > 0) {
+      return;
+    }
     beam.AttachForce(magnitude, dist_L);
+    beam.adjustIndexes();
+    beam.makeGraph_getPoints();
   } else if (command.startsWith("load".toUpperCase())) {   
     //Adjust loads
     //:-> LOAD.<NAME>.setTo(%NUMBER% <N*/kN>, %Distance_m% <L*/R>)
@@ -83,7 +88,6 @@ void doTerminalCommand(String command) {
     }
     command = command.substring("LOAD.".length());
     String forceName = command.substring(0, command.indexOf("."));
-    //Find the force with same name
     int replacing_index = 0;
     Force F_compare;
     for (int index = 0; index < beam.loads.size(); index++) {
@@ -137,6 +141,7 @@ void doTerminalCommand(String command) {
       beam.adjustIndexes();
       beam.calculateReactionForces();
       beam.makeGraph_getPoints();
+      removed_loads++;
       println("Removed " + forceName);
     }
   } else if (command.startsWith("SCREEN.")) {  

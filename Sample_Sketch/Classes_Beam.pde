@@ -8,7 +8,7 @@ class Point {
   }
 }
 
-
+int removed_loads = 0;
 class Force {
   Point head;  //Point
   float magnitude = 1000;
@@ -108,7 +108,7 @@ class Beam {
   }
 
   float Length, Thickness_Left_View;
-  
+
   //Forces on beam
   Force support_A, support_B;  //A -> Left support, B -> Right support
   ArrayList<Force> loads = new ArrayList<Force>();  //Loads on the beam : In order
@@ -117,7 +117,7 @@ class Beam {
     Force load = new Force(new Point(this.center.X - this.Length/2 + m_to_pixel(Distance_L_m), this.center.Y), Value);
     load.distance_L = Distance_L_m;
     load.Line_Color = color(0, 0, 255);
-    load.Name = "F" + str(loads.size() + 0);
+    load.Name = "F" + str(loads.size() + removed_loads);
     loads.add(load);
     println("Attaching a force of magnitude " + str(load.magnitude) + " at " + str(load.head.X) + " index : " + str(load.indexOnBeam));
     this.calculateReactionForces();
@@ -209,7 +209,7 @@ class Beam {
   color fill_color = color(0);
   color stroke_color = color(0);
   float stroke_thickness = 2;
-  
+
   //draw the beam
   void draw_beam() {
     if (this.mouseTrackingMode) {  //Mouse holding the beam
@@ -229,11 +229,11 @@ class Beam {
 
   //Bending moments and graph
   ArrayList<Float> Bending_Moments = new ArrayList<Float>();
-  float MaximumBendingMomentInBeam = 0;
+  float MaximumBendingMomentInBeam = Float.MIN_VALUE;
   float MinimumBendingMomentInBeam = Float.MAX_VALUE;
   //Get bending moments
   float makeGraph_getPoints() {
-    float MaxBendingMoment = 0;
+    float MaxBendingMoment = Float.MIN_VALUE;
     Bending_Moments = new ArrayList<Float>();
     this.Bending_Moments.add(0.0);
     for (int i = 0; i < this.loads.size(); i++) {
@@ -269,8 +269,8 @@ class Beam {
     line(this.support_A.head.X - 2, graphCenter.Y - graphHeight/2, this.support_A.head.X - 2, graphCenter.Y + graphHeight/2);  //The dark green line  
     stroke(#62FF8F);
     strokeWeight(1);
-    for (float X = this.center.X - this.Length/2; X <= graphCenter.X + graphLength/2; X += this.Length/10) {
-      line(X, graphCenter.Y - graphHeight/2, X, graphCenter.Y + graphHeight/2);  //The light green ones
+    for (float X = this.center.X - this.Length/2; X <= graphCenter.X + graphLength/2; X += this.Length/20) {
+      line(X, graphCenter.Y - graphHeight/2, X, graphCenter.Y + graphHeight/2);  //The light green ones - Horizontal lines
     }
     stroke(127, 127, 127);
     strokeWeight(0.5);
@@ -291,21 +291,29 @@ class Beam {
     rectMode(CENTER);
     stroke(0);
     strokeWeight(1.5);
-    line(graphCenter.X - graphLength/2, graphCenter.Y, graphCenter.X + graphLength/2, graphCenter.Y);  //X Axis
+    line(graphCenter.X - graphLength/2, graphCenter.Y, graphCenter.X + graphLength/2, graphCenter.Y);
     noFill();
     strokeWeight(2);
     rect(graphCenter.X, graphCenter.Y, graphLength, graphHeight);  //Frame rectangle
     if (this.loads.size() >= 1) {
-      stroke(0);
-      strokeWeight(1.5);
       float Scale_Yaxis = 0;  //These many pixels = 1 Nm bending moment
       if (-MinimumBendingMomentInBeam < MaximumBendingMomentInBeam) {
-        Scale_Yaxis = graphHeight/2.0 * 0.9/MaximumBendingMomentInBeam;
+        Scale_Yaxis = graphHeight/2 * 0.9/MaximumBendingMomentInBeam;
       } else {
         Scale_Yaxis = -graphHeight/2 * 0.9/MinimumBendingMomentInBeam;  //- because MinimumBendingMomentInBeam is negative
       }
-      //Y axis lines
-      
+      strokeWeight(0.2);
+      stroke(123, 123, 123);
+      for (float y = graphCenter.Y - 0.9*graphHeight/2; y <= graphCenter.Y + 0.9*graphHeight/2; y += MaximumBendingMomentInBeam / 10 * Scale_Yaxis) {
+        line(graphCenter.X - graphLength/2, y, graphCenter.X + graphLength/2, y);
+      }  //Horizontal lines
+      textSize(10);
+      textFont(Grapher_text_font);
+      textAlign(LEFT,TOP);
+      String str = "SCALE :-\nX axis - 1 unit = " + str(this.Length_m/20) + " meters\nY axis - 1 unit = " + getStringFormat_BendingMoment(Math.max(MaximumBendingMomentInBeam,-MinimumBendingMomentInBeam) / 10.0);
+      text(str, graphCenter.X + graphLength/2 - textWidth(str), graphCenter.Y + graphHeight/2 + 10);
+      stroke(0);
+      strokeWeight(1.5);
       textAlign(RIGHT, BOTTOM);
       textSize(15);
       fill(#FF0000);
@@ -330,9 +338,10 @@ class Beam {
         //Write the bending moments on the graph
         text(getStringFormat_BendingMoment(Bending_Moments.get(F.indexOnBeam)), this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis);
       }
+      
     }
   }
-  
+
   //Material of the beam
   Material material;
   float SectionModulus;  
@@ -344,18 +353,19 @@ class Beam {
   void calculateSectionModulous() {
     this.SectionModulus = (this.MaximumBendingMomentInBeam * this.Factor_of_Safety / this.material.Max_Stress);
   }
-  
-  
+
+
   //Description of a beam
   String description() {
     String des = "";
+    this.calculateSectionModulous();
     des = "Beam Length : " + this.Length_m + " m\n" + 
-          "Beam Thickness (in left view) : " + this.Thickness_Left_View_m + " m\n" +
-          "Beam Material : \"" + this.material.Name + "\" (Maximum stress = " + String.format("%.3E",material.Max_Stress) + " N/m^2)\n" +
-          "The maximum bending moment in beam is : " + getStringFormat_BendingMoment(this.MaximumBendingMomentInBeam) + " \n" + 
-          
-          "The Section Modulus required is : " + String.format("%.2E",this.SectionModulus) + " m^3" + 
-          "\n";
+      "Beam Thickness (in left view) : " + this.Thickness_Left_View_m + " m\n" +
+      "Beam Material : \"" + this.material.Name + "\" (Maximum stress = " + String.format("%.3E", material.Max_Stress) + " N/m^2)\n" +
+      "The maximum bending moment in beam is : " + getStringFormat_BendingMoment(this.MaximumBendingMomentInBeam) + " \n" + 
+
+      "The Section Modulus required is : " + String.format("%.2E", this.SectionModulus) + " m^3" + 
+      "\n";
     return des;
   }
 }
@@ -386,7 +396,7 @@ class Material {
     this.Max_Stress = Max_stress;
   }
   String description_String() {
-    return "Name : " + this.Name + "\n" +   String.format("%.3E",this.Max_Stress) + " N/m^2)";
+    return "Name : " + this.Name + "\n" +   String.format("%.3E", this.Max_Stress) + " N/m^2)";
   }
 }
 
