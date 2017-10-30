@@ -18,6 +18,7 @@ void Introduction_screen_navigator() {
   }
 }
 
+//The first option to segue to BMA
 PImage BMA_icon;
 
 int i = 255, MODE = 1;  //For background colour to adjust

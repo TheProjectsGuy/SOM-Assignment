@@ -34,10 +34,12 @@ void doTerminalCommand(String command) {
     println("\"" + command + "\"");
     if (command.equals("RESET")) {  //reset :-> Beam.reset
       beam = new Beam(new Point(width/2, height/2), 4, 0.1);
+      doTerminalCommand("SCREEN.BMA");
     } else if (command.startsWith("SETLENGTH(")) {  //Setlength :-> Beam.SetLength(%NUMBER%)
       beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
     } else if (command.startsWith("CLEAR")) {  //:-> Beam.clear
       beam.loads.clear();
+      doTerminalCommand("SCREEN.BMA");
       beam.calculateReactionForces();
     } else if (command.startsWith("MAKEGRAPH")) {  //Make the graph :-> Beam.MakeGraph
       CURRENT_SCREEN = "Bending Moment Screen";
@@ -87,26 +89,37 @@ void doTerminalCommand(String command) {
         break;
       }
     }
-    command = command.substring(forceName.length());  //.<Function>(<Parameters>)
-    if (command.startsWith(".setTo(".toUpperCase())) {    //:-> loads.<Name>.setTo(Parameters)
-      command = command.substring(".setTo(".length(), command.length() - 1);
+    command = command.substring(forceName.length() + 1);  //<Function>(<Parameters>)
+    if (command.startsWith("setTo(".toUpperCase())) {    //:-> loads.<Name>.setTo(Parameters)
+      command = command.substring("setTo(".length(), command.length() - 1);
       //We have %NUMBER% <N*/kN>, %Distance_m% <L*/R>
-      F_compare = beam.loads.get(replacing_index);
+      F_compare = beam.loads.get(replacing_index);  //We have the force whose properties are to be replaced here
       String[] arguments = split(command, ',');
       float magnitude, dist_L;
-      if (arguments[0].endsWith("kN".toUpperCase())) {  
-        magnitude = -float(arguments[0].substring(0, arguments[0].length() - 2)) * 1e3;  //Entry in kN
+      if (arguments.length == 2) {
+        if (arguments[0].endsWith("kN".toUpperCase())) {  
+          magnitude = -float(arguments[0].substring(0, arguments[0].length() - 2)) * 1e3;  //Entry in kN
+        } else {
+          if (arguments[0].endsWith("N")) 
+            arguments[0] = arguments[0].substring(0, arguments[0].length() - 1);
+          magnitude = -float(arguments[0].substring(0));
+        }
+        if (arguments[1].endsWith("R")) {
+          dist_L = beam.Length_m - float(arguments[1].substring(0, arguments[1].length() - 1));
+        } else {
+          if (arguments[1].endsWith("L"))
+            arguments[1] = arguments[1].substring(0, arguments[1].length() - 1);
+          dist_L = float(arguments[1]);
+        }
       } else {
-        if (arguments[0].endsWith("N")) 
-          arguments[0] = arguments[0].substring(0, arguments[0].length() - 1);
-        magnitude = -float(arguments[0].substring(0));
-      }
-      if (arguments[1].endsWith("R")) {
-        dist_L = beam.Length_m - float(arguments[1].substring(0, arguments[1].length() - 1));
-      } else {
-        if (arguments[1].endsWith("L"))
-          arguments[1] = arguments[1].substring(0, arguments[1].length() - 1);
-        dist_L = float(arguments[1]);
+        if (arguments[0].endsWith("kN".toUpperCase())) {  
+          magnitude = -float(arguments[0].substring(0, arguments[0].length() - 2)) * 1e3;  //Entry in kN
+        } else {
+          if (arguments[0].endsWith("N")) 
+            arguments[0] = arguments[0].substring(0, arguments[0].length() - 1);
+          magnitude = -float(arguments[0].substring(0));
+        }
+        dist_L = F_compare.distance_L;
       }
       F_compare.magnitude = magnitude;
       //F_compare.distance_L = dist_L;
@@ -116,6 +129,12 @@ void doTerminalCommand(String command) {
       beam.calculateReactionForces();
       beam.makeGraph_getPoints();
       beam.adjustIndexes();
+    } else if (command.startsWith("remove".toUpperCase())) {  //:-> load.<NAME>.remove
+      beam.loads.remove(replacing_index);
+      beam.calculateReactionForces();
+      beam.makeGraph_getPoints();
+      beam.adjustIndexes();
+      println("Removed " + forceName);
     }
   } else if (command.startsWith("SCREEN.")) {  
     //Screen segue
@@ -124,6 +143,7 @@ void doTerminalCommand(String command) {
     case "BMA":        //:-> SCREEN.BMA
       CURRENT_SCREEN = "Bending Moment Screen";
       CURRENT_VIEW = "Loading View";  //Show the Bengind Moment screen : Introduction 
+      beam.centerAt(new Point(width/2, height/2), true);
       break;
     default:
       terminal.text = "";
@@ -133,6 +153,7 @@ void doTerminalCommand(String command) {
   } else {
     switch(command) {
     case "EXIT":  //:-> EXIT
+      //Do resetting things here
       exit();
       break;
     case "INFO":  //:-> INFO

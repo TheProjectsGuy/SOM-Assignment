@@ -1,9 +1,14 @@
+/*
+*   CURRENT_SCREEN = "Bending Moment Screen"
+ * Views : Loading View; Grapher View
+ */
 Beam beam;
 
 boolean dragging_forces = false;
 Force force_drag = new Force();
 
 PImage BMA_done;
+PImage Analyze_beam_icon;
 
 void Bending_Moment_Screen_navigator() {
   background(255, 255, 255);
@@ -53,45 +58,48 @@ void Starting_screen_BMA() {
     //making the adjusters
     stroke(0);
     strokeWeight(0.5);
-    line(beam.center.X - beam.Length/2, beam.center.Y, beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness * 2);  //Left extreme
-    line(beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness * 5/4, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4);  //The -
-    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness*2);  //Middle line
-    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness * 5/4);   //The -
-    line(beam.center.X + beam.Length/2, beam.center.Y, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness * 2);  //Right extreme
+    line(beam.center.X - beam.Length/2, beam.center.Y, beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness_Left_View * 2);  //Left extreme
+    line(beam.center.X - beam.Length/2, beam.center.Y - beam.Thickness_Left_View * 5/4, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness_Left_View * 5/4);  //The -
+    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y, constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness_Left_View*2);  //Middle line
+    line(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness_Left_View * 5/4, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness_Left_View * 5/4);   //The -
+    line(beam.center.X + beam.Length/2, beam.center.Y, beam.center.X + beam.Length/2, beam.center.Y - beam.Thickness_Left_View * 2);  //Right extreme
     rectMode(CENTER);
     stroke(0.1);
     strokeWeight(0.1);
     fill(255);
-    rect(((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2,beam.center.Y - beam.Thickness * 5/4, textWidth(str(pixelX_to_mL_on_beam(mouseX))) + 40 ,(5/4-7/8) * beam.Thickness);
-    rect(((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2,beam.center.Y - beam.Thickness * 5/4, textWidth(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX))) + 40 ,(5/4-7/8) * beam.Thickness);
-    textAlign(CENTER,CENTER);
+    rect(((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness_Left_View * 5/4, textWidth(str(pixelX_to_mL_on_beam(mouseX))) + 40, (5/4-7/8) * beam.Thickness_Left_View);
+    rect(((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness_Left_View * 5/4, textWidth(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX))) + 40, (5/4-7/8) * beam.Thickness_Left_View);
+    textAlign(CENTER, CENTER);
     textFont(placerFont);
     textSize(18);
     fill(0);
-    text(str(pixelX_to_mL_on_beam(mouseX)), ((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness * 5/4);
-    text(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX)), ((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness * 5/4);
+    text(str(pixelX_to_mL_on_beam(mouseX)), ((beam.center.X - beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness_Left_View * 5/4);
+    text(str(beam.Length_m - pixelX_to_mL_on_beam(mouseX)), ((beam.center.X + beam.Length/2) + (constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2)))/2, beam.center.Y - beam.Thickness_Left_View * 5/4);
     strokeWeight(2);
     stroke(#6EAAAD);
-    ellipse(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness * 5/4, 2, 2);
+    ellipse(constrain(mouseX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2), beam.center.Y - beam.Thickness_Left_View * 5/4, 2, 2);
     //Adjusters made
   }
 }
 
 void Starting_screen_with_grapher() {  
   Starting_screen_BMA();
-  if (beam.pointInsideBeam(new Point(mouseX, mouseY)) && mousePressed && !mouseHolding) {  //If user clicks the beam, he can drag it using this : Drag and drop Beam
-    beam.mouseTrackingMode = true;
-    mouseHolding = true;
-  }
+  //if (beam.pointInsideBeam(new Point(mouseX, mouseY)) && mousePressed && !mouseHolding) {  //If user clicks the beam, he can drag it using this : Drag and drop Beam
+  //  beam.mouseTrackingMode = true;
+  //  mouseHolding = true;
+  //}
   beam.makeGraph(); //Heavy graphing is done here
 }
 
-void Bending_Moment_Screen_essential_buttons() {
+//Buttons essential to this screen only
+void Bending_Moment_Screen_essential_buttons() {  
   imageMode(CENTER);
-  image(BMA_done, width - 72, height * 3/4, 72, 72);
+  image(BMA_done, width - 72, height * 3/4, 72, 72);   //Make graph
   if (mouseX <= width - 72 + 72/2 && mouseX >= width - 72 - 72/2 && mouseY <= height * 3/4 + 72/2 && mouseY >= height * 3/4 - 72/2 && mousePressed && !mouseHolding) {
     doTerminalCommand("BEAM.MAKEGRAPH");
   }
+  imageMode(CORNER);
+  image(Analyze_beam_icon, beam.center.X - beam.Length/2 - 20 - 90, beam.center.Y + beam.Thickness_Left_View / 2 + 20, 90, 90);
 }
 
 void mouseReleased_Bending_Moment_Screen() {

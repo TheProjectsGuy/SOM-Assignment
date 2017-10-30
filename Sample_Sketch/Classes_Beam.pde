@@ -31,7 +31,6 @@ class Force {
     }
   }
 
-
   color Line_Color = color(0);
   float Force_stroke_thickness = 1.5;
   boolean mouseTrackingMode = false;
@@ -53,7 +52,7 @@ class Force {
       textSize(18);
       fill(this.Line_Color);
       textAlign(CENTER, BOTTOM);
-      text(this.Name, headAt.X, headAt.Y - beam.Thickness / 2 - 5);
+      text(this.Name, headAt.X, headAt.Y - beam.Thickness_Left_View / 2 - 5);
       line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y + 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X, headAt.Y + 50);  
@@ -66,7 +65,7 @@ class Force {
       textSize(18);
       fill(this.Line_Color);
       textAlign(CENTER, TOP);
-      text(this.Name, headAt.X, headAt.Y + beam.Thickness / 2 + 5);
+      text(this.Name, headAt.X, headAt.Y + beam.Thickness_Left_View / 2 + 5);
       line(headAt.X, headAt.Y, headAt.X - 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X + 10 * sin(radians(30)), headAt.Y - 10 * cos(radians(30)));
       line(headAt.X, headAt.Y, headAt.X, headAt.Y - 50); 
@@ -93,11 +92,11 @@ class Force {
 //Simple basic beam
 class Beam {
   float Length_m = 4;
-  float Thickness_m = 0.10;
+  float Thickness_Left_View_m = 0.10;
   Point center;
 
   boolean pointInsideBeam(Point point) {
-    if (point.X <= center.X + Length/2 && point.X >= center.X - Length/2 && point.Y <= center.Y + Thickness/2 && point.Y >= center.Y - Thickness/2)
+    if (point.X <= center.X + Length/2 && point.X >= center.X - Length/2 && point.Y <= center.Y + Thickness_Left_View/2 && point.Y >= center.Y - Thickness_Left_View/2)
       return true;
     return false;
   }
@@ -108,11 +107,11 @@ class Beam {
     this.centerAt(this.center, true);  //To reset the end supports to calibrate with the beam, but don't change their values
   }
 
-  float Length, Thickness;
-
+  float Length, Thickness_Left_View;
+  
+  //Forces on beam
   Force support_A, support_B;  //A -> Left support, B -> Right support
   ArrayList<Force> loads = new ArrayList<Force>();  //Loads on the beam : In order
-
 
   void AttachForce(float Value, float Distance_L_m) {
     Force load = new Force(new Point(this.center.X - this.Length/2 + m_to_pixel(Distance_L_m), this.center.Y), Value);
@@ -170,12 +169,12 @@ class Beam {
   Beam(Point center, float Length_m, float Thickness_m) {
 
     this.Length_m = Length_m;
-    this.Thickness_m = Thickness_m;
+    this.Thickness_Left_View_m = Thickness_m;
     Length = m_to_pixel(Length_m);
-    Thickness = m_to_pixel(Thickness_m);
+    Thickness_Left_View = m_to_pixel(Thickness_m);
     this.centerAt(center);
   }
-
+  //center the beam
   void centerAt(Point center) {
     centerAt(center, false);
   }
@@ -210,7 +209,8 @@ class Beam {
   color fill_color = color(0);
   color stroke_color = color(0);
   float stroke_thickness = 2;
-
+  
+  //draw the beam
   void draw_beam() {
     if (this.mouseTrackingMode) {  //Mouse holding the beam
       this.centerAt(new Point(mouseX, mouseY), true);  //Previous data exists
@@ -219,7 +219,7 @@ class Beam {
     strokeWeight(stroke_thickness);
     fill(fill_color);
     rectMode(CENTER);
-    rect(center.X, center.Y, Length, Thickness);  //The beam thickness
+    rect(center.X, center.Y, Length, Thickness_Left_View);  //The beam thickness
     for (Force load : loads) {
       load.make(this.center, this.Length_m, load.distance_L);  //Make the loads
     }
@@ -227,9 +227,11 @@ class Beam {
     support_B.make();
   }
 
+  //Bending moments and graph
   ArrayList<Float> Bending_Moments = new ArrayList<Float>();
   float MaximumBendingMomentInBeam = 0;
   float MinimumBendingMomentInBeam = Float.MAX_VALUE;
+  //Get bending moments
   float makeGraph_getPoints() {
     float MaxBendingMoment = 0;
     Bending_Moments = new ArrayList<Float>();
@@ -254,7 +256,7 @@ class Beam {
     println("Maximum BM : " + str(MaximumBendingMomentInBeam) + " Minimum BM : " + str(MinimumBendingMomentInBeam));
     return MaxBendingMoment;
   }
-
+  //Make the graph
   void makeGraph() {  //To make a graph about the bending moment
     makeGraph(new Point(width/2, height/2));
   }  
@@ -264,11 +266,11 @@ class Beam {
   void makeGraph(Point graphCenter, float graphLength, float graphHeight) {
     stroke(#00641D);
     strokeWeight(4);
-    line(this.support_A.head.X - 2, graphCenter.Y - graphHeight/2, this.support_A.head.X - 2, graphCenter.Y + graphHeight/2);  
+    line(this.support_A.head.X - 2, graphCenter.Y - graphHeight/2, this.support_A.head.X - 2, graphCenter.Y + graphHeight/2);  //The dark green line  
     stroke(#62FF8F);
     strokeWeight(1);
     for (float X = this.center.X - this.Length/2; X <= graphCenter.X + graphLength/2; X += this.Length/10) {
-      line(X, graphCenter.Y - graphHeight/2, X, graphCenter.Y + graphHeight/2);
+      line(X, graphCenter.Y - graphHeight/2, X, graphCenter.Y + graphHeight/2);  //The light green ones
     }
     stroke(127, 127, 127);
     strokeWeight(0.5);
@@ -285,7 +287,7 @@ class Beam {
       text(f.Name, f.head.X, graphCenter.Y);
       textAlign(CENTER, TOP);
       text(str(Math.round(f.distance_L * 100)/100.0) + "L\n" + str(Math.round((this.Length_m - f.distance_L) * 100)/100.0) + "R", f.head.X, graphCenter.Y + 5);  //Info about the load
-    }
+    }//Forces and vertical lines
     rectMode(CENTER);
     stroke(0);
     strokeWeight(1.5);
@@ -302,39 +304,57 @@ class Beam {
       } else {
         Scale_Yaxis = graphHeight/2 * 0.9/MinimumBendingMomentInBeam;
       }
-      //for (int i = 0; i < this.loads.size(); i++) {
-      //  /*
-      //  if (i == 0) {
-      //    line(this.support_A.head.X, graphCenter.Y, this.loads.get(i).head.X, map(Bending_Moments.get(i), MinimumBendingMomentInBeam, MaximumBendingMomentInBeam, graphCenter.Y + 0.90 * graphHeight/2, graphCenter.Y - 0.90 * graphHeight/2));
-      //  } else if (i <= this.loads.size() - 2) {
-      //    line(loads.get(i - 1).head.X, map(Bending_Moments.get(i-1), MinimumBendingMomentInBeam, MaximumBendingMomentInBeam, graphCenter.Y + 0.90 * graphHeight/2, graphCenter.Y - 0.90 * graphHeight/2), 
-      //      loads.get(i).head.X, map(Bending_Moments.get(i), MinimumBendingMomentInBeam, MaximumBendingMomentInBeam, graphCenter.Y + 0.90 * graphHeight/2, graphCenter.Y - 0.90 * graphHeight/2));
-      //  } else {
-      //    line(loads.get(i).head.X, map(Bending_Moments.get(i), MinimumBendingMomentInBeam, MaximumBendingMomentInBeam, graphCenter.Y + 0.90 * graphHeight/2, graphCenter.Y - 0.90 * graphHeight/2), 
-      //      support_B.head.X, graphCenter.Y);
-      //  }
-      //  */
-      //}
+      textAlign(RIGHT, BOTTOM);
+      textSize(15);
+      fill(#FF0000);
       for (Force F : this.loads) {
-        if (F.indexOnBeam == 1) {  //Starting 
+        if (F.indexOnBeam == 1) {  //Starting
           line(this.center.X - this.Length/2, graphCenter.Y, this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis);
+          if (this.loads.size() == 1) {  //Only 1 load
+            line(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, this.center.X + this.Length/2, graphCenter.Y);
+          }
         } else if (F.indexOnBeam == this.loads.size()) {  //ending
-          line(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, 
-            this.center.X - this.Length/2 + m_to_pixel(loads.get(F.indexOnBeam-1-1).distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam - 1) * Scale_Yaxis);
+          if (this.loads.size() > 1) {
+            line(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, 
+              this.center.X - this.Length/2 + m_to_pixel(loads.get(F.indexOnBeam-1-1).distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam - 1) * Scale_Yaxis);  //this to previous
+          }
           line(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, this.center.X + this.Length/2, graphCenter.Y);
         } else {  //middle
           line(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, 
             this.center.X - this.Length/2 + m_to_pixel(loads.get(F.indexOnBeam-1-1).distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam - 1) * Scale_Yaxis);
         }
         ellipse(this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis, 2, 2);
+        //Write the bending moments on the graph
+        text(getStringFormat_BendingMoment(Bending_Moments.get(F.indexOnBeam)), this.center.X - this.Length/2 + m_to_pixel(F.distance_L), graphCenter.Y - Bending_Moments.get(F.indexOnBeam) * Scale_Yaxis);
       }
     }
   }
-
+  
+  //Material of the beam
+  Material material;
+  float SectionModulus;  
+  //Factor of safety in the beam
   float Factor_of_Safety = 1;
   void setFOS(float value) {
     Factor_of_Safety = value;
   }
+  void calculateSectionModulous() {
+    this.SectionModulus = (this.MaximumBendingMomentInBeam * this.Factor_of_Safety / this.material.Max_Stress);
+  }
+  
+  
+}
+
+String getStringFormat_BendingMoment(float number) {
+  String return_string = "";
+  if (number >= 100) {
+    number /= 1000;
+    return_string += str(Math.round(number * 100)/100.0) + "kNm";
+  } else {
+    return_string += str(Math.round(number * 10)/10.0) + "Nm";
+  }
+
+  return return_string;
 }
 
 //Takes care of all the maths and fuzz about the beam
@@ -346,10 +366,31 @@ class BeamSpecifications {
 class Material {
   String Name;
   float Max_Stress;
-  Material(String name, float Max_yield_stress) {
+  Material(String name, float Max_stress) {
     this.Name = name;
-    this.Max_Stress = Max_yield_stress;
+    this.Max_Stress = Max_stress;
+  }
+  String description_String() {
+    return "Name : " + this.Name + "\n" +  str(Max_Stress);
   }
 }
 
+ArrayList<Material> Materials_list;
+
 //Material List needed
+void loadMaterials() {
+  Table material_table;
+  Materials_list = new ArrayList<Material>();
+  material_table = loadTable("Materials/Material Data.csv", "header");  //CSV file here
+  println("File has " + str(material_table.lastRowIndex()) + " indexes");
+
+  for (int i = 0; i < material_table.lastRowIndex(); i++) {
+    TableRow row = material_table.getRow(i);
+    Material m = new Material(row.getString(0), row.getFloat(1));
+    Materials_list.add(m);
+  }
+  for (Material m : Materials_list) {
+    println(m.Name + ": " + str(m.Max_Stress));
+  }
+  beam.material = Materials_list.get(0);  //The first row is the default material
+}

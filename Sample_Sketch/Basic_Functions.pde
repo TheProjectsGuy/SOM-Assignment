@@ -23,9 +23,12 @@ void attach_images() {  //Attach Images
 
   //Error Screen Navigator Error Icon
   Error_icon_ESN = loadImage("data/error.png");
-  
+
   //Bending Moment Analysis Screen
   BMA_done = loadImage("data/Buttons/Bending Moment Analysis/showGraph.png");
+  
+  //Analyze beam
+  Analyze_beam_icon = loadImage("data/Buttons/Bending Moment Analysis/beamInfo.png");
 }
 
 void Make_Essentials() {  //Essential Buttons
@@ -91,7 +94,7 @@ float m_to_pixel(float value_m) {
 }
 
 float pixelX_to_mL_on_beam(float pixelX) {
-  pixelX = constrain(pixelX,beam.center.X - beam.Length/2, beam.center.X + beam.Length/2);  //Anything outside this is useless
+  pixelX = constrain(pixelX, beam.center.X - beam.Length/2, beam.center.X + beam.Length/2);  //Anything outside this is useless
   pixelX -= beam.center.X - beam.Length/2;
   float dist_mL = pixelX / scale_1m_pixels;
   return dist_mL;
@@ -99,7 +102,10 @@ float pixelX_to_mL_on_beam(float pixelX) {
 
 void initialize_variables() {
   //Initialize beam
-  beam = new Beam(new Point(width/2, height/2), 4, 0.2);  
+  beam = new Beam(new Point(width/2, height/2), 4, 0.2);  //center, length_m, thickness_m
+
+  //Array list of materials
+  loadMaterials();
 
   //Initialize temrinal
   terminal = new UITextField(width * 0.1, height - 40, width * 0.9, height);
@@ -107,7 +113,7 @@ void initialize_variables() {
   terminal.singleLineTextField = true;
   terminal.text = "";
   terminal.text_inTheField = false;
-    
+
   //Forces : Dragging forces
   headAt = new Point(width - 40, height/3);
 }
