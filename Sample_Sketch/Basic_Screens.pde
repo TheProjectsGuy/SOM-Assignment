@@ -19,7 +19,7 @@ void Introduction_screen_navigator() {
 }
 
 //The first option to segue to BMA
-PImage BMA_icon;
+PImage BMA_icon, Beam_Properties;
 
 int i = 255, MODE = 1;  //For background colour to adjust
 void Startup_Screen() {
@@ -50,12 +50,22 @@ void Startup_Screen() {
       BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_hovered.png");
     if (mousePressed) {
       BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_clicked.png");
-      doTerminalCommand("SCREEN.BMA");  
+      doTerminalCommand("SCREEN.BMA");
     }
   } else {
     BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_unhovered.png");
   }
-  //Option : Help
+  //Beam Properties button
+  if (mouseX <= width/2 + 208 * 1.5/2 && mouseX >= width/2 - 208 * 1.5/2 && mouseY <= height * 0.60 + 54 * 1.5/2 && mouseY >= height * 0.60 - 54 * 1.5/2) { 
+    Beam_Properties = loadImage("data/Buttons/Beam Analysis/Beam Properties_hovered.png");
+    if (mousePressed && !mouseHolding) {
+      doTerminalCommand("SCREEN.BEAMPROPERTIES");
+    }
+  } else {
+    Beam_Properties = loadImage("data/Buttons/Beam Analysis/Beam Properties_unhovered.png");
+  }
+  imageMode(CENTER);
+  image(Beam_Properties, width/2, height * 0.60, 208 * 1.5, 54 * 1.5);
 }
 
 
@@ -70,8 +80,8 @@ void Error_screen_navigator() {
   image(Error_icon_ESN, width/2, height/4, 400, 400);
   textFont(Error_MessageFont);
   textSize(50);
-  textAlign(CENTER,CENTER);
+  textAlign(CENTER, CENTER);
   fill(255);
-  text("Error",width/2,height/2);
+  text("Error", width/2, height/2);
   text("Page not found", width/2, height * 3/4);
 }

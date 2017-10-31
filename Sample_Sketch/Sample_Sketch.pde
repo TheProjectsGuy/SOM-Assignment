@@ -29,6 +29,10 @@ void draw() {
   case "Bending Moment Screen":
     Bending_Moment_Screen_navigator();
     break;
+  case "Beam Properties":
+    Beam_Property_navigator();
+    
+    break;
   default:
     CURRENT_VIEW = "Broken Link";
     Error_screen_navigator();
@@ -46,13 +50,17 @@ void mouseReleased() {
 }
 
 void keyPressed() {
+  if (CURRENT_SCREEN == "Beam Properties") {
+    Beam_Properties_KeyboardHandler();
+  }
   if (terminal.selected) {
     if (key != ENTER)
       terminal.keyboardManager();
     else {
       try {
         doTerminalCommand(terminal.text);
-      } catch (Exception e) {
+      } 
+      catch (Exception e) {
         println("ERROR");
       }
       finally {

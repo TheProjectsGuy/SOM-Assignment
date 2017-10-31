@@ -10,6 +10,8 @@ void setup_Fonts() {  //Font setup module
   Grapher_text_font = loadFont("Gadugi-Bold-20.vlw");
   //Info Screen font
   BMA_Info_Font = loadFont("ArialMT-32.vlw");
+  //Beam Properties Heading font
+  BP_Heading_Font = loadFont("BankGothicBT-Medium-48.vlw");
 }
 
 PImage close_icon, info_icon, help_icon, home_icon, terminal_clear_icon;
@@ -109,6 +111,9 @@ void initialize_variables() {
 
   //Array list of materials
   loadMaterials();
+  
+  //Forces : Dragging forces
+  headAt = new Point(width - 40, height/3);
 
   //Initialize temrinal
   terminal = new UITextField(width * 0.1, height - 40, width * 0.9, height);
@@ -116,7 +121,19 @@ void initialize_variables() {
   terminal.singleLineTextField = true;
   terminal.text = "";
   terminal.text_inTheField = false;
-
-  //Forces : Dragging forces
-  headAt = new Point(width - 40, height/3);
+  
+  //Beam property menu
+  BeamLength = new UITextField(20,height * 0.2,20 + 700, height * 0.2 + 50);
+  BeamLength.placeholder_text = "Enter Length of beam (in meters): ";
+  
+  BeamLength.singleLineTextField = true;
+  BeamLength.text = "";
+  BeamLength.text_inTheField = false;
+  
+  BeamThickness = new UITextField(20, height * 0.4, 20 + 700, height * 0.4 + 50);
+  BeamThickness.placeholder_text = "Enter Thickness of beam (in meters): ";
+  
+  BeamThickness.singleLineTextField = true;
+  BeamThickness.text = "";
+  BeamThickness.text_inTheField = false;
 }

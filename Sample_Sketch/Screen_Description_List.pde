@@ -43,14 +43,17 @@ void doTerminalCommand(String command) {
       beam.setLength_m(float(command.substring("setLength(".length(), command.length() - 1)));
     } else if (command.startsWith("CLEAR")) {  //:-> Beam.clear
       beam.loads.clear();
-      doTerminalCommand("SCREEN.BMA");
       beam.calculateReactionForces();
+      doTerminalCommand("SCREEN.BMA");
     } else if (command.startsWith("MAKEGRAPH")) {  //Make the graph :-> Beam.MakeGraph
       CURRENT_SCREEN = "Bending Moment Screen";
       CURRENT_VIEW = "Grapher View";
       beam.centerAt(new Point(width/2, height/6), true);  //Previous data exists
       println(beam.makeGraph_getPoints());
       beam.makeGraph();
+    } else if (command.startsWith("SETTHICKNESS(")) {  //:-> BEAM.SETTHICKNESS(%NUMBER%)
+      beam.Thickness_Left_View_m = float(command.substring("setThickness(".length(), command.length() - 1));
+      beam.Thickness_Left_View = m_to_pixel(beam.Thickness_Left_View_m);
     }
   } else if (command.startsWith("NewLoad(".toUpperCase())) {  //:-> NewLoad(%NUMBER% <N*/kN>, %Distance_m% <L*/R>)  
     //New load added
@@ -152,6 +155,14 @@ void doTerminalCommand(String command) {
       CURRENT_SCREEN = "Bending Moment Screen";
       CURRENT_VIEW = "Loading View";  //Show the Bengind Moment screen : Introduction 
       beam.centerAt(new Point(width/2, height/2), true);
+      break;
+    case "BEAMPROPERTIES":
+      CURRENT_SCREEN = "Beam Properties";
+      CURRENT_VIEW = "Beam Dimensions";
+      break;
+      case "BEAMMATERIAL":
+      CURRENT_SCREEN = "Beam Properties";
+      CURRENT_VIEW = "Beam Material";
       break;
     default:
       terminal.text = "";
