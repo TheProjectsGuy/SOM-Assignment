@@ -33,6 +33,9 @@ void attach_images() {  //Attach Images
   
   //Analyze beam
   Analyze_beam_icon = loadImage("data/Buttons/Bending Moment Analysis/beamInfo.png");
+  
+  //Change Material Button
+  ChangeMaterialButton = loadImage("data/Buttons/Beam Analysis/ChangeMaterial.png");
 }
 
 void Make_Essentials() {  //Essential Buttons

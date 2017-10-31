@@ -396,7 +396,7 @@ class Material {
     this.Max_Stress = Max_stress;
   }
   String description_String() {
-    return "Name : " + this.Name + "\n" +   String.format("%.3E", this.Max_Stress) + " N/m^2)";
+    return "Name : " + this.Name + " Max Stress : " +   String.format("%.3E", this.Max_Stress) + " N/m^2";
   }
 }
 
@@ -409,7 +409,7 @@ void loadMaterials() {
   material_table = loadTable("Materials/Material Data.csv", "header");  //CSV file here
   println("File has " + str(material_table.lastRowIndex()) + " indexes");
 
-  for (int i = 0; i < material_table.lastRowIndex(); i++) {
+  for (int i = 0; i <= material_table.lastRowIndex(); i++) {
     TableRow row = material_table.getRow(i);
     Material m = new Material(row.getString(0), row.getFloat(1));
     Materials_list.add(m);

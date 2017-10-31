@@ -147,7 +147,7 @@ void doTerminalCommand(String command) {
       removed_loads++;
       println("Removed " + forceName);
     }
-  } else if (command.startsWith("SCREEN.")) {  
+  } else if (command.startsWith("SCREEN.")) {  //:-> SCREEN.%SCREEN%
     //Screen segue
     command = command.substring("SCREEN.".length());  
     switch(command) {

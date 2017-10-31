@@ -49,6 +49,11 @@ void load_drag_drop_arrows() {
 PFont placerFont;
 
 void Starting_screen_BMA() {
+  
+  textFont(Grapher_text_font,15);
+  fill(255,0,0);
+  textAlign(CENTER,TOP);
+  text(beam.material.description_String(),width/2,0);
   beam.draw_beam();
   load_drag_drop_arrows();
   if (mouseX <= headAt.X + 15 && mouseX >= headAt.X - 15 && mouseY <= headAt.Y + 10 && mouseY >= headAt.Y - 50 - 10 && mousePressed && !mouseHolding) {  //If user click inside the rect
