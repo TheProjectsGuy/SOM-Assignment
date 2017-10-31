@@ -11,7 +11,7 @@ void Beam_Property_navigator() {
 }
 
 PFont BP_Heading_Font;
-UITextField BeamLength, BeamThickness;
+UITextField BeamLength, BeamThickness, Material_Number;
 
 PImage ChangeMaterialButton;
 
@@ -38,29 +38,31 @@ void Beam_Properties_View() {
   beam.draw_beam();
 }
 
+
+
 void Beam_Material_View() {
   textFont(Grapher_text_font, 20);
   textAlign(CENTER, TOP);
-  text("Current material : " + beam.material.description_String(), width/2, 10); 
-  
-  for (int i = 0; i < Materials_list.size(); i++) {
+  text("Current material description : " + beam.material.description_String(), width/2, 10); 
+
+  for (int i = 0; i < Materials_list.size(); i++) {  //Item list
     strokeWeight(1);
     stroke(127);
     noFill();
     rectMode(CORNER);
     rect(width * 0.12, 70 + i * 40, 1000, 30); //textWidth
-    
+
     fill(0);
     textFont(UITextField_TextFont, 17);
-    textAlign(LEFT,TOP);
+    textAlign(LEFT, TOP);
     //text(str(i + 1) + ") " + Materials_list.get(i).Name , width * 0.12 + 6, 70 + i * 40 + 4);
     text(str(i + 1) + ")", width * 0.12 + 6, 70 + i * 40 + 9);
-    text(Materials_list.get(i).Name , width * 0.12 + 6 + textWidth("NNN"), 70 + i * 40 + 9);
-    textAlign(RIGHT,TOP);
-    text(String.format("%.3E",Materials_list.get(i).Max_Stress) + " N/m^2" ,width * 0.12 + 1000 - 5, 70 + i * 40 + 9);
+    text(Materials_list.get(i).Name, width * 0.12 + 6 + textWidth("NNN"), 70 + i * 40 + 9);
+    textAlign(RIGHT, TOP);
+    text(String.format("%.3E", Materials_list.get(i).Max_Stress) + " N/m^2", width * 0.12 + 1000 - 5, 70 + i * 40 + 9);
   }
-  
-  
+
+  Material_Number.drawItems();
 }
 
 void Beam_Properties_KeyboardHandler() {
@@ -81,6 +83,15 @@ void Beam_Properties_KeyboardHandler() {
       BeamThickness.placeholder_text = "Beam thickness set to " + str(beam.Thickness_Left_View_m) + " m";
       BeamThickness.text = "";
       BeamThickness.text_inTheField = false;
+    }
+  } else if (Material_Number.selected) {
+    if (key != ENTER) {
+      Material_Number.keyboardManager();
+    } else {
+      beam.material = Materials_list.get(int(Material_Number.text) - 1);
+      Material_Number.text = "";
+      Material_Number.placeholder_text = "Done";
+      Material_Number.text_inTheField = false;
     }
   }
 }

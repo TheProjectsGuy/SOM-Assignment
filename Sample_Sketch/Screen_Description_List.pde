@@ -34,6 +34,7 @@ void doTerminalCommand(String command) {
     println("\"" + command + "\"");
     if (command.equals("RESET")) {  //reset :-> Beam.reset
       beam = new Beam(new Point(width/2, height/2), 4, 0.1);
+      beam.material = Materials_list.get(0);
       doTerminalCommand("SCREEN.BMA");
     } else if (command.equals("INFO")) {  // :-> Beam.info
       CURRENT_SCREEN = "Bending Moment Screen";

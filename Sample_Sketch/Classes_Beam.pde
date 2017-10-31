@@ -365,6 +365,8 @@ class Beam {
       "The maximum bending moment in beam is : " + getStringFormat_BendingMoment(this.MaximumBendingMomentInBeam) + " \n" + 
 
       "The Section Modulus required is : " + String.format("%.2E", this.SectionModulus) + " m^3" + 
+      "In order to obtain this section modulus," + "\n " + 
+      "The width of the beam must be " + 6.0 * this.SectionModulus / (Math.pow(this.Thickness_Left_View_m,2)) + " m (rectangular cross section).\n" +
       "\n";
     return des;
   }

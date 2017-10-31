@@ -12,10 +12,31 @@ void Introduction_screen_navigator() {
     Startup_Screen();
     break;
     //Info and Help pending...
+  case "Help":
+    HelpScreen();
+    break;
+  case "Introduction":
+    Intro_Screen();
+    break;
   default:
     Error_screen_navigator();
     break;
   }
+}
+
+PImage dev_Icon;
+void HelpScreen() {
+  
+  background(255);
+  imageMode(CENTER);
+  image(dev_Icon, width/2, height/2);
+}
+
+PImage HelpImage;
+void Intro_Screen() {
+  background(255);
+  imageMode(CENTER);
+  image(HelpImage, width/2, height/2);
 }
 
 //The first option to segue to BMA

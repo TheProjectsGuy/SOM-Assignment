@@ -22,11 +22,14 @@ void attach_images() {  //Attach Images
   help_icon = loadImage("data/help.png");
   home_icon = loadImage("data/home.png");
   terminal_clear_icon = loadImage("data/clearTerminal.png");
+  HelpImage = loadImage("data/Terminal_Commands.png");
   //Buttons on startup screen
   BMA_icon = loadImage("data/Buttons/Bending Moment Analysis/Bending_moment_analysis_unhovered.png");
 
   //Error Screen Navigator Error Icon
   Error_icon_ESN = loadImage("data/error.png");
+  
+  dev_Icon = loadImage("data/about_dev.jpg");
 
   //Bending Moment Analysis Screen
   BMA_done = loadImage("data/Buttons/Bending Moment Analysis/showGraph.png");
@@ -62,8 +65,8 @@ void HomeButtonEssential() {  //Essential : Home button
 
 void HelpButtongEssential() {  //Essential : Help Button
   imageMode(CENTER);
-  image(help_icon, width/2, height * 8/9 + 10, 100, 50);
-  if (mouseX >= width/2 - 50 && mouseX <= width/2 + 50 && mouseY <= height * 8/9 + 25 && mouseY >= height * 8/9 - 25 && mousePressed && !mouseHolding) {
+  image(help_icon, width/2, height * 8/9 + 10, 620/10.0, 553.0/10);
+  if (mouseX >= width/2 - 620/20.0 && mouseX <= width/2 + 620/20.0 && mouseY <= height * 8/9 + 553.0/20 && mouseY >= height * 8/9 - 553.0/20 && mousePressed && !mouseHolding) {
     doTerminalCommand("help");
   }
 }
@@ -139,4 +142,10 @@ void initialize_variables() {
   BeamThickness.singleLineTextField = true;
   BeamThickness.text = "";
   BeamThickness.text_inTheField = false;
+  
+  Material_Number = new UITextField(width * 0.75, height - 50 - 50, width * 0.75 + 100, height - 50);
+  Material_Number.placeholder_text = "No : ";
+  Material_Number.text = "";
+  Material_Number.singleLineTextField = true;
+  Material_Number.text_inTheField = false;
 }
